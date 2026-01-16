@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Diary</title>
+  <style>
+    :root{
+      /* Shkolo-ish */
+      --blue:#1b87c9;
+      --blue-dark:#187fbf;
+      --text:#111;
+      --muted:#8b8b8b;
+      --line:#e6e6e6;
+      --bg:#ffffff;
+      --section:#f2f2f2;
+
+      --green:#2ecc71;
+      --blueBadge:#2d8be0;
+      --yellow:#f1c40f;
+      --orange:#f39c12;
+      --red:#e74c3c;
+      --grey:#d9dde3;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    button, input, select{ font-family:inherit; }
+
+    /* ===== Top header (blue) ===== */
+    .top{
+      background:var(--blue);
+      color:#fff;
+      padding: calc(env(safe-area-inset-top) + 14px) 16px 0 16px;
+    }
+    .topRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding-bottom:10px;
+    }
+    .classPick{
+      display:flex; align-items:center; gap:6px;
+      font-size:22px;
+      font-weight:500;
+      opacity:.95;
+    }
+    .caret{
+      width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid rgba(255,255,255,.9);
+      margin-top:4px;
+    }
+    .centerTitle{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-size:26px;
+      font-weight:500;
+      flex:1;
+      margin-right:28px; /* to visually center like app */
+    }
+    .noteIcon{
+      width:28px;height:28px;
+      display:inline-flex;
+      align-items:center;justify-content:center;
+      border:2px solid rgba(255,255,255,.9);
+      border-radius:4px;
+      position:relative;
+      opacity:.95;
+    }
+    .noteIcon:before{
+      content:"";
+      position:absolute;
+      left:6px; top:5px;
+      width:2px; height:18px;
+      background:rgba(255,255,255,.9);
+      border-radius:2px;
+      box-shadow: 6px 0 0 rgba(255,255,255,.9), 12px 0 0 rgba(255,255,255,.9);
+      opacity:.35;
+    }
+
+    /* ===== Secondary tabs (Absences / Ratings / Reviews / Timetable / Homework) ===== */
+    .subTabs{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding: 6px 0 0 0;
+      user-select:none;
+    }
+    .subTab{
+      flex:1;
+      text-align:center;
+      color:rgba(255,255,255,.55);
+      font-size:20px;
+      padding: 6px 0 10px 0;
+      position:relative;
+      cursor:pointer;
+    }
+    .subTab .label{
+      display:block;
+      font-size:20px;
+      margin-top:4px;
+      font-weight:500;
+    }
+    .subTab .ico{
+      display:block;
+      font-size:22px;
+      line-height:22px;
+      opacity:.9;
+    }
+    .subTab.active{
+      color:#fff;
+    }
+    .subTab.active::after{
+      content:"";
+      position:absolute;
+      left:10%;
+      right:10%;
+      bottom:0;
+      height:4px;
+      background:#fff;
+      border-radius:2px 2px 0 0;
+    }
+
+    /* ===== Content ===== */
+    .content{
+      padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    }
+    .sectionBar{
+      background:var(--section);
+      padding:18px 16px;
+      font-size:34px;
+      font-weight:600;
+      color:#1a7fc1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
+    }
+    .sectionBar.small{
+      font-size:28px;
+      font-weight:600;
+      color:#1a7fc1;
+    }
+    .chev{
+      width:14px;height:14px;
+      border-right:3px solid #5a5a5a;
+      border-bottom:3px solid #5a5a5a;
+      transform: rotate(45deg);
+      opacity:.7;
+      margin-right:2px;
+    }
+
+    /* List rows */
+    .rowItem{
+      padding:16px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      cursor:pointer;
+      background:#fff;
+    }
+    .rowItem:active{ background:#f8f8f8; }
+    .leftBook{
+      width:26px;
+      height:26px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      color:#000;
+      margin-top:2px;
+      opacity:.9;
+    }
+    .rowMain{ flex:1; min-width:0; }
+    .rowTitle{
+      font-size:28px;
+      font-weight:700;
+      line-height:1.1;
+      white-space:normal;
+      word-break:break-word;
+    }
+    .rowSub{
+      margin-top:10px;
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      align-items:center;
+      color:#7a7a7a;
+      font-size:24px;
+    }
+
+    /* Badges */
+    .circle{
+      width:44px;height:44px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      font-weight:700;
+      color:#fff;
+      margin-left:6px;
+    }
+    .c-blue{ background:var(--blueBadge); }
+    .c-green{ background:var(--green); }
+    .c-yellow{ background:var(--yellow); color:#fff; }
+    .c-orange{ background:var(--orange); }
+    .c-red{ background:var(--red); }
+    .c-grey{ background:var(--grey); color:#fff; }
+
+    /* Ratings bubbles line */
+    .bubbles{
+      margin-top:10px;
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .bubble{
+      width:54px;height:54px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-size:26px;
+      font-weight:800;
+    }
+    .b5{ background:var(--blueBadge); }
+    .b6{ background:var(--green); }
+    .b4{ background:var(--yellow); }
+    .b3{ background:var(--orange); }
+    .b2{ background:var(--red); }
+
+    .noRatings{
+      margin-top:10px;
+      font-size:26px;
+      color:#8f8f8f;
+    }
+
+    /* ===== Reviews detail (PRAISE/REMARKS screen) ===== */
+    .detailTop{
+      background:var(--blue);
+      color:#fff;
+      padding: calc(env(safe-area-inset-top) + 10px) 16px 0 16px;
+    }
+    .detailHeader{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding-bottom:10px;
+    }
+    .backBtn{
+      width:36px;height:36px;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+    }
+    .backArrow{
+      width:14px;height:14px;
+      border-left:4px solid #fff;
+      border-bottom:4px solid #fff;
+      transform: rotate(45deg);
+    }
+    .personTitle{
+      flex:1;
+      text-align:center;
+      font-size:28px;
+      font-weight:500;
+      opacity:.95;
+      margin-right:36px; /* keep centered */
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .seg{
+      display:flex;
+      justify-content:space-between;
+      padding: 16px 0 0 0;
+    }
+    .segBtn{
+      flex:1;
+      text-align:center;
+      color:rgba(255,255,255,.55);
+      font-size:22px;
+      letter-spacing:1px;
+      padding-bottom:14px;
+      cursor:pointer;
+      position:relative;
+    }
+    .segBtn.active{ color:#fff; }
+    .segBtn.active::after{
+      content:"";
+      position:absolute;
+      left:18%;
+      right:18%;
+      bottom:0;
+      height:4px;
+      background:#fff;
+      border-radius:2px 2px 0 0;
+    }
+
+    .reviewRow{
+      padding:16px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      gap:14px;
+      align-items:center;
+      background:#fff;
+    }
+    .roundIcon{
+      width:64px;height:64px;border-radius:999px;
+      background:#dff2d8;
+      display:flex;align-items:center;justify-content:center;
+      font-size:30px;
+      border:6px solid #bfe2b2;
+      flex:0 0 auto;
+    }
+    .roundIcon.bad{
+      background:#f6c1b7;
+      border-color:#e8a59b;
+    }
+    .reviewMain{ flex:1; min-width:0; }
+    .reviewTitle{
+      font-size:30px;
+      font-weight:700;
+      line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .reviewSub{
+      margin-top:6px;
+      font-size:24px;
+      color:#8a8a8a;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .reviewRight{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:#8a8a8a;
+      font-size:22px;
+      flex:0 0 auto;
+    }
+    .cal{
+      width:26px;height:26px;
+      border:2px solid #8a8a8a;
+      border-radius:4px;
+      position:relative;
+      opacity:.7;
+    }
+    .cal:before{
+      content:"";
+      position:absolute;
+      left:4px; top:7px;
+      right:4px; bottom:4px;
+      border-top:2px solid #8a8a8a;
+      opacity:.7;
+    }
+    .downChev{
+      width:14px;height:14px;
+      border-right:3px solid #8a8a8a;
+      border-bottom:3px solid #8a8a8a;
+      transform: rotate(45deg);
+      opacity:.7;
+    }
+
+    /* ===== Bottom nav ===== */
+    .bottom{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      background:#fff;
+      border-top:1px solid var(--line);
+      padding: 10px 10px calc(10px + env(safe-area-inset-bottom)) 10px;
+    }
+    .bottomRow{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      user-select:none;
+    }
+    .nav{
+      flex:1;
+      text-align:center;
+      color:#9a9a9a;
+      font-size:22px;
+      cursor:pointer;
+      position:relative;
+      padding: 6px 0;
+    }
+    .nav .ico{
+      display:block;
+      font-size:28px;
+      line-height:28px;
+      margin-bottom:2px;
+      color:#9a9a9a;
+    }
+    .nav.active{ color:var(--blue); }
+    .nav.active .ico{ color:var(--blue); }
+
+    .badge9{
+      position:absolute;
+      top:0;
+      right:28%;
+      background:#e74c3c;
+      color:#fff;
+      font-size:18px;
+      font-weight:700;
+      padding:2px 8px;
+      border-radius:999px;
+      border:2px solid #fff;
+    }
+
+    /* Hide */
+    .hidden{ display:none !important; }
+  </style>
+</head>
+
+<body>
+
+<!-- ===== MAIN DIARY (like your screenshots) ===== -->
+<div id="screen-main">
+  <div class="top">
+    <div class="topRow">
+      <div class="classPick">
+        MC1 <span class="caret"></span>
+      </div>
+
+      <div class="centerTitle">
+        <span class="noteIcon" aria-hidden="true"></span>
+        <span>Diary</span>
+      </div>
+
+      <div style="width:28px;"></div>
+    </div>
+
+    <div class="subTabs">
+      <div class="subTab active" data-tab="absences">
+        <span class="ico">❗</span><span class="label">Absences</span>
+      </div>
+      <div class="subTab" data-tab="ratings">
+        <span class="ico">✏️</span><span class="label">Ratings</span>
+      </div>
+      <div class="subTab" data-tab="reviews">
+        <span class="ico">🏅</span><span class="label">Reviews</span>
+      </div>
+      <div class="subTab" data-tab="timetable">
+        <span class="ico">🕒</span><span class="label">Timetable</span>
+      </div>
+      <div class="subTab" data-tab="homework">
+        <span class="ico">📓</span><span class="label">Homework</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ABSENCES (Notes) -->
+    <div id="view-absences">
+      <div class="sectionBar small">
+        <span>Notes</span>
+        <div class="chev"></div>
+      </div>
+
+      <div id="notesList"></div>
+    </div>
+
+    <!-- RATINGS -->
+    <div id="view-ratings" class="hidden">
+      <div class="sectionBar">
+        <span>First Term</span>
+        <div class="chev"></div>
+      </div>
+
+      <div id="ratingsList"></div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div id="view-reviews" class="hidden">
+      <div id="reviewsList"></div>
+    </div>
+
+    <!-- TIMETABLE (placeholder but styled) -->
+    <div id="view-timetable" class="hidden">
+      <div class="sectionBar small">
+        <span>Timetable</span>
+        <div class="chev"></div>
+      </div>
+      <div class="rowItem" style="cursor:default;">
+        <div class="leftBook">📅</div>
+        <div class="rowMain">
+          <div class="rowTitle" style="font-size:26px;">(UI replica placeholder)</div>
+          <div class="rowSub" style="font-size:22px;">Add schedule blocks here.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOMEWORK (placeholder but styled) -->
+    <div id="view-homework" class="hidden">
+      <div class="sectionBar small">
+        <span>Homework</span>
+        <div class="chev"></div>
+      </div>
+      <div class="rowItem" style="cursor:default;">
+        <div class="leftBook">📝</div>
+        <div class="rowMain">
+          <div class="rowTitle" style="font-size:26px;">(UI replica placeholder)</div>
+          <div class="rowSub" style="font-size:22px;">Add homework rows here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottomRow">
+      <div class="nav active" data-nav="diary">
+        <span class="ico">📘</span>Diary
+      </div>
+      <div class="nav" data-nav="discussions">
+        <span class="ico">💬</span>Discussions
+      </div>
+      <div class="nav" data-nav="notifications">
+        <span class="ico">🔔</span>Notifications
+        <span class="badge9">9+</span>
+      </div>
+      <div class="nav" data-nav="more">
+        <span class="ico">⋯</span>More
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REVIEWS DETAIL (Praise/Remarks) ===== -->
+<div id="screen-reviews-detail" class="hidden">
+  <div class="detailTop">
+    <div class="detailHeader">
+      <div class="backBtn" id="backFromDetail"><div class="backArrow"></div></div>
+      <div class="personTitle">🧍‍♂️ Мартин Стоилов 11а</div>
+    </div>
+
+    <div class="seg">
+      <div class="segBtn active" data-seg="praise">PRAISE</div>
+      <div class="segBtn" data-seg="remarks">REMARKS</div>
+    </div>
+  </div>
+
+  <div class="content" id="detailList"></div>
+
+  <div class="bottom">
+    <div class="bottomRow">
+      <div class="nav active">
+        <span class="ico">📘</span>Diary
+      </div>
+      <div class="nav">
+        <span class="ico">💬</span>Discussions
+      </div>
+      <div class="nav">
+        <span class="ico">🔔</span>Notifications
+        <span class="badge9">9+</span>
+      </div>
+      <div class="nav">
+        <span class="ico">⋯</span>More
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ========= Data (seed to match your screenshots) ========= */
+
+  const notesData = [
+    { title: "TOTAL", delay: 3, disrespect: 6, respect: 44 },
+    { title: "Български език и литература", delay: 0, disrespect: 0, respect: 3 },
+    { title: "Английски език", delay: 0, disrespect: 0, respect: 1 },
+    { title: "Руски език", delay: 0, disrespect: 0, respect: 2 },
+    { title: "Математика", delay: 0, disrespect: 0, respect: 3 },
+    { title: "Гражданско образование", delay: 2, disrespect: 1, respect: 0 },
+    { title: "Физическо възпитание и спорт", delay: 1, disrespect: 0, respect: 4 }
+  ];
+
+  const ratingsData = [
+    { title:"Български език и литература", grades:[3,5] },
+    { title:"Английски език", grades:[5,6,6] },
+    { title:"Руски език", grades:[5,3] },
+    { title:"Математика", grades:[2,6,5] },
+    { title:"Гражданско образование", grades:[3,2,3] },
+    { title:"Физическо възпитание и спорт", grades:[6] },
+    { title:"Английски език (IUCH - PP)", grades:[], noRatings:true },
+    { title:"МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)", grades:[6,6] },
+    { title:"МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Английски език)", grades:[5] },
+    { title:"МОДУЛ 3 - Езикът чрез литературата (IUCH - PP (req module)) (Английски език)", grades:[6] },
+    { title:"МОДУЛ 4 - Култура и междукултурно общуване (IUCH - PP (req module)) (Английски език)", grades:[4] },
+    { title:"Английски език чрез културно-творческо интегрирано обучение (IUCH - PP (selectable module)) (Английски език)", grades:[], noRatings:true },
+    { title:"Руски език (IUCH - PP)", grades:[], noRatings:true },
+    { title:"МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Руски език)", grades:[6,2,5] }
+  ];
+
+  const reviewsSummary = [
+    { title:"TOTAL", praise:7, remarks:9 },
+    { title:"Общи отзиви", praise:0, remarks:0 },
+    { title:"Български език и литература", praise:1, remarks:1 },
+    { title:"Английски език", praise:0, remarks:3 },
+    { title:"Руски език", praise:0, remarks:1 },
+    { title:"Математика", praise:0, remarks:0 },
+    { title:"Гражданско образование", praise:1, remarks:2 }
+  ];
+
+  const praiseItems = [
+    { icon:"✋", title:"Active participation", sub:"Civic education", date:"22.12.2025" },
+    { icon:"✅", title:"Task completed", sub:"BEL", date:"11.12.2025" },
+    { icon:"👥", title:"Communication", sub:"Английски език чрез култур...", date:"27.11.2025" },
+    { icon:"✅", title:"Task completed", sub:"M1 - Власт и институции", date:"15.10.2025" },
+    { icon:"✅", title:"Task completed", sub:"M1 - Власт и институции", date:"15.10.2025" },
+    { icon:"✅", title:"Task completed", sub:"M1 - Власт и институции", date:"15.10.2025" },
+    { icon:"✋", title:"Active participation", sub:"Руски фолклор и традиции", date:"26.09.2025" }
+  ];
+
+  const remarkItems = [
+    { icon:"🙅", title:"Unexcuse", sub:"Civic education", date:"12.01.2026" },
+    { icon:"⚠️", title:"General negative feedback", sub:"Civic education", date:"12.01.2026" },
+    { icon:"📚", title:"No Homework", sub:"M1 - Власт и институции", date:"09.01.2026" },
+    { icon:"🧩", title:"No study aid", sub:"BEL", date:"11.12.2025" },
+    { icon:"📵", title:"Attention Deficit", sub:"English", date:"11.12.2025" },
+    { icon:"⚠️", title:"General negative feedback", sub:"Russian", date:"08.12.2025" },
+    { icon:"👕", title:"No PE Uniform", sub:"Sport", date:"21.11.2025" },
+    { icon:"📵", title:"Attention Deficit", sub:"English", date:"14.11.2025" },
+    { icon:"📵", title:"Attention Deficit", sub:"English", date:"27.10.2025" }
+  ];
+
+  /* ========= Helpers ========= */
+
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  function badgeClassByType(type, value){
+    if(type === "respect" || type === "praise") return value ? "c-green" : "c-grey";
+    if(type === "disrespect" || type === "remarks") return value ? "c-orange" : "c-grey";
+    if(type === "delay") return value ? "c-yellow" : "c-grey";
+    return "c-grey";
+  }
+
+  function gradeBubbleClass(g){
+    if(g === 6) return "b6";
+    if(g === 5) return "b5";
+    if(g === 4) return "b4";
+    if(g === 3) return "b3";
+    if(g === 2) return "b2";
+    return "b5";
+  }
+
+  function escapeHtml(s=""){
+    return String(s).replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  /* ========= Render: Notes (Absences) ========= */
+
+  function renderNotes(){
+    const host = $("#notesList");
+    host.innerHTML = "";
+
+    notesData.forEach((x) => {
+      const row = document.createElement("div");
+      row.className = "rowItem";
+      row.innerHTML = `
+        <div class="leftBook">📖</div>
+        <div class="rowMain">
+          <div class="rowTitle">${escapeHtml(x.title)}</div>
+          <div class="rowSub">
+            <span>Delay <span class="circle ${badgeClassByType("delay", x.delay)}">${x.delay}</span></span>
+            <span>Disrespect. <span class="circle ${badgeClassByType("disrespect", x.disrespect)}">${x.disrespect}</span></span>
+            <span>Respect. <span class="circle ${badgeClassByType("respect", x.respect)}">${x.respect}</span></span>
+          </div>
+        </div>
+      `;
+      host.appendChild(row);
+    });
+  }
+
+  /* ========= Render: Ratings ========= */
+
+  function renderRatings(){
+    const host = $("#ratingsList");
+    host.innerHTML = "";
+
+    ratingsData.forEach((x) => {
+      const row = document.createElement("div");
+      row.className = "rowItem";
+      row.style.alignItems = "flex-start";
+
+      const bubbles = x.noRatings
+        ? `<div class="noRatings">No ratings</div>`
+        : `<div class="bubbles">
+            ${x.grades.map(g => `<span class="bubble ${gradeBubbleClass(g)}">${g}</span>`).join("")}
+          </div>`;
+
+      row.innerHTML = `
+        <div class="leftBook">📖</div>
+        <div class="rowMain">
+          <div class="rowTitle">${escapeHtml(x.title)}</div>
+          ${bubbles}
+        </div>
+      `;
+      host.appendChild(row);
+    });
+  }
+
+  /* ========= Render: Reviews (Summary list) ========= */
+
+  function renderReviewsSummary(){
+    const host = $("#reviewsList");
+    host.innerHTML = "";
+
+    // No grey section bar in screenshot for reviews list; it starts immediately.
+    reviewsSummary.forEach((x, idx) => {
+      const row = document.createElement("div");
+      row.className = "rowItem";
+      row.innerHTML = `
+        <div class="leftBook">📖</div>
+        <div class="rowMain">
+          <div class="rowTitle">${escapeHtml(x.title)}</div>
+          <div class="rowSub">
+            <span>Praise <span class="circle ${badgeClassByType("praise", x.praise)}">${x.praise}</span></span>
+            <span>Remarks <span class="circle ${badgeClassByType("remarks", x.remarks)}">${x.remarks}</span></span>
+          </div>
+        </div>
+      `;
+
+      // Tap subject -> open detail (like your screenshots)
+      // In Shkolo you tap a subject to open Praise/Remarks details.
+      row.addEventListener("click", () => {
+        if(idx === 0) return; // TOTAL doesn't open in this replica
+        openReviewsDetail();
+      });
+
+      host.appendChild(row);
+    });
+  }
+
+  /* ========= Reviews Detail ========= */
+
+  let activeSeg = "praise";
+
+  function renderDetail(){
+    const host = $("#detailList");
+    host.innerHTML = "";
+
+    const list = (activeSeg === "praise") ? praiseItems : remarkItems;
+
+    list.forEach((x) => {
+      const row = document.createElement("div");
+      row.className = "reviewRow";
+      row.innerHTML = `
+        <div class="roundIcon ${activeSeg === "remarks" ? "bad" : ""}">${escapeHtml(x.icon)}</div>
+        <div class="reviewMain">
+          <div class="reviewTitle">${escapeHtml(x.title)}</div>
+          <div class="reviewSub">${escapeHtml(x.sub)}</div>
+        </div>
+        <div class="reviewRight">
+          <div class="cal"></div>
+          <div>${escapeHtml(x.date)}</div>
+          <div class="downChev"></div>
+        </div>
+      `;
+      host.appendChild(row);
+    });
+  }
+
+  function openReviewsDetail(){
+    $("#screen-main").classList.add("hidden");
+    $("#screen-reviews-detail").classList.remove("hidden");
+    setSeg("praise");
+  }
+
+  function closeReviewsDetail(){
+    $("#screen-reviews-detail").classList.add("hidden");
+    $("#screen-main").classList.remove("hidden");
+  }
+
+  function setSeg(seg){
+    activeSeg = seg;
+    $$("#screen-reviews-detail .segBtn").forEach(b => b.classList.toggle("active", b.dataset.seg === seg));
+    renderDetail();
+  }
+
+  /* ========= Tab navigation (top) ========= */
+
+  function setTopTab(tab){
+    $$(".subTab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+    $("#view-absences").classList.toggle("hidden", tab !== "absences");
+    $("#view-ratings").classList.toggle("hidden", tab !== "ratings");
+    $("#view-reviews").classList.toggle("hidden", tab !== "reviews");
+    $("#view-timetable").classList.toggle("hidden", tab !== "timetable");
+    $("#view-homework").classList.toggle("hidden", tab !== "homework");
+  }
+
+  /* ========= Wire events ========= */
+
+  // Top tabs
+  $$(".subTab").forEach(t => {
+    t.addEventListener("click", () => setTopTab(t.dataset.tab));
+  });
+
+  // Reviews (top tab "Reviews") is active in screenshot 3728
+  // But default can remain "Absences". You can switch it here:
+  // setTopTab("reviews");
+
+  // Reviews detail segmented
+  $$("#screen-reviews-detail .segBtn").forEach(b => {
+    b.addEventListener("click", () => setSeg(b.dataset.seg));
+  });
+
+  // Back from detail
+  $("#backFromDetail").addEventListener("click", closeReviewsDetail);
+
+  // Bottom nav (visual only like screenshots)
+  $$(".nav").forEach(n => {
+    n.addEventListener("click", () => {
+      $$(".nav").forEach(x => x.classList.remove("active"));
+      n.classList.add("active");
+    });
+  });
+
+  /* ========= Init ========= */
+  renderNotes();
+  renderRatings();
+  renderReviewsSummary();
+  setTopTab("absences"); // matches first notes screenshot
+</script>
+</body>
+</html>

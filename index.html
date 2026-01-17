@@ -166,6 +166,118 @@
       border-radius:4px 4px 0 0;
     }
 
+    /* ===== Screens (Bottom nav) ===== */
+.screen.hidden{ display:none; }
+
+/* hide diary views when not in diary */
+.diaryOnly.hidden{ display:none; }
+
+/* ===== Discussions UI ===== */
+#screen-discussions{
+  background:#fff;
+}
+
+.discTop{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--blue);
+  color:#fff;
+  padding: 12px var(--padX) 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.discTitle{
+  font-size:20px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.discPlus{
+  font-size:28px;
+  font-weight:500;
+  opacity:.95;
+}
+
+.discSearchRow{
+  background:#f6f6f6;
+  padding: 10px var(--padX);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-bottom:1px solid var(--line);
+}
+
+.discSearch{
+  flex:1;
+  background:#fff;
+  border:1px solid #e3e3e3;
+  border-radius:10px;
+  padding: 10px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#777;
+}
+.discSearchIco{ font-size:16px; opacity:.8; }
+.discSearchText{ flex:1; font-size:15px; }
+.discSearchDrop{ font-size:16px; opacity:.7; }
+.discMenu{ font-size:20px; color:#555; }
+
+.discList{ background:#fff; }
+
+.discItem{
+  display:flex;
+  gap:12px;
+  padding: 14px var(--padX);
+  border-bottom:1px solid var(--line);
+  background:#fff;
+}
+
+.discAvatar{
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  background:#e5e5e5;
+  flex:0 0 auto;
+  position:relative;
+}
+
+.discText{ flex:1; min-width:0; }
+.discSubject{
+  font-size:20px;
+  font-weight:600;
+  color:#111;
+  line-height:1.15;
+}
+.discMeta{
+  margin-top:4px;
+  font-size:14px;
+  color:#666;
+  font-weight:500;
+}
+.discSnippet{
+  margin-top:2px;
+  font-size:14px;
+  color:#666;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.discItem.unread .discSubject{ font-weight:800; }
+.discUnread{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background:#2d8be0;
+  margin-top:18px;
+  flex:0 0 auto;
+}
+
     /* ===== Content docking ===== */
     main.content{
       padding-top: calc(var(--topH) + env(safe-area-inset-top));
@@ -1375,6 +1487,91 @@
   </div>
 </div>
 
+
+          <!-- DISCUSSIONS (Bottom nav screen) -->
+<section id="screen-discussions" class="screen hidden">
+  <div class="discTop">
+    <div class="discTitle"><span class="discIco">💬</span>Discussions</div>
+    <div class="discPlus">＋</div>
+  </div>
+
+  <div class="discSearchRow">
+    <div class="discSearch">
+      <span class="discSearchIco">🔎</span>
+      <span class="discSearchText">Search by topic</span>
+      <span class="discSearchDrop">▾</span>
+    </div>
+    <div class="discMenu">☰</div>
+  </div>
+
+  <div class="discList">
+    <div class="discItem">
+      <div class="discAvatar"></div>
+      <div class="discText">
+        <div class="discSubject">Профил История.</div>
+        <div class="discMeta">Petar Yanev</div>
+        <div class="discSnippet">Здравейте!В понеделник Елена ще ви пред...</div>
+      </div>
+    </div>
+
+    <div class="discItem">
+      <div class="discAvatar"></div>
+      <div class="discText">
+        <div class="discSubject">Извинение.</div>
+        <div class="discMeta">Martin Stoilov</div>
+        <div class="discSnippet">Здравейте, господине! Пиша Ви, за да се и...</div>
+      </div>
+    </div>
+
+    <div class="discItem">
+      <div class="discAvatar"></div>
+      <div class="discText">
+        <div class="discSubject">Задачи -14. 01. 2026 г.</div>
+        <div class="discMeta">Tinka Bonina-Hristova</div>
+        <div class="discSnippet">&nbsp;</div>
+      </div>
+    </div>
+
+    <div class="discItem unread">
+      <div class="discAvatar"></div>
+      <div class="discText">
+        <div class="discSubject">Задачи</div>
+        <div class="discMeta">Tinka Bonina-Hristova</div>
+        <div class="discSnippet">14. 01. 2026 г.</div>
+      </div>
+      <div class="discUnread"></div>
+    </div>
+
+    <div class="discItem">
+      <div class="discAvatar"></div>
+      <div class="discText">
+        <div class="discSubject">Зарачи</div>
+        <div class="discMeta">Tinka Bonina-Hristova</div>
+        <div class="discSnippet">&nbsp;</div>
+      </div>
+    </div>
+
+    <div class="discItem">
+      <div class="discAvatar"></div>
+      <div class="discText">
+        <div class="discSubject">Задача</div>
+        <div class="discMeta">Tinka Bonina-Hristova</div>
+        <div class="discSnippet">Изпращам Ви задачата, която коментирах...</div>
+      </div>
+    </div>
+
+    <div class="discItem unread">
+      <div class="discAvatar"></div>
+      <div class="discText">
+        <div class="discSubject">Учебни занятия - 23.12.2025 г.</div>
+        <div class="discMeta">Plamen Borisov</div>
+        <div class="discSnippet">Уважаеми родители, ученици и учители,Уч...</div>
+      </div>
+      <div class="discUnread"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ==== END ADD ==== -->
 
         </div>
@@ -1406,13 +1603,13 @@
 
     <!-- BOTTOM NAV -->
     <footer class="bottomNav" id="bottomBar">
-      <div class="navBar">
-        <div class="navItem active"><span class="nIco">📘</span>Diary</div>
-        <div class="navItem"><span class="nIco">💬</span>Discussions</div>
-        <div class="navItem"><span class="nIco">🔔</span>Notifications <span class="navBadge">9+</span></div>
-        <div class="navItem"><span class="nIco">⋯</span>More</div>
-      </div>
-    </footer>
+  <div class="navBar" id="bottomNav">
+    <div class="navItem active" data-bottom="diary"><span class="nIco">📘</span>Diary</div>
+    <div class="navItem" data-bottom="discussions"><span class="nIco">💬</span>Discussions</div>
+    <div class="navItem" data-bottom="notifications"><span class="nIco">🔔</span>Notifications <span class="navBadge">9+</span></div>
+    <div class="navItem" data-bottom="more"><span class="nIco">⋯</span>More</div>
+  </div>
+</footer>
 
   </div>
 
@@ -1443,11 +1640,41 @@
     window.addEventListener("load", () => {
       measureBars();
       setTopTab("reviews");
+      setBottomScreen("diary");
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("./sw.js").catch(()=>{});
       }
     });
     window.addEventListener("resize", measureBars);
+
+     // ===== Bottom nav switching =====
+function setBottomScreen(screen){
+  // bottom active state
+  $$("#bottomNav .navItem").forEach(n => n.classList.toggle("active", n.dataset.bottom === screen));
+
+  // diary vs other screens
+  const isDiary = (screen === "diary");
+
+  // show/hide diary main views by toggling the entire main's children (except discussions screen)
+  // easiest: hide discussions when not used, and rely on your existing diary tabs otherwise
+  $("#screen-discussions")?.classList.toggle("hidden", screen !== "discussions");
+
+  // If leaving diary, hide all diary views (absences/ratings/reviews/timetable/homework)
+  if(!isDiary){
+    ["absences","ratings","reviews","timetable","homework"].forEach(t => {
+      const el = document.getElementById("view-" + t);
+      if(el) el.classList.add("hidden");
+    });
+  } else {
+    // back to diary: show whichever top tab is active
+    const activeTop = $("#topTabs .topTab.active")?.dataset.tab || "reviews";
+    setTopTab(activeTop);
+  }
+}
+
+// bottom nav clicks
+$$("#bottomNav .navItem").forEach(n => n.addEventListener("click", () => setBottomScreen(n.dataset.bottom)));
+    
   </script>
 </body>
 </html>

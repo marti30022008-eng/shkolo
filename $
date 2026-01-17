@@ -308,6 +308,76 @@
       border:2px solid #fff;
     }
 
+    /* ✅ ADD this CSS anywhere in your <style> (I recommend near the Discussions UI) */
+
+/* ===== Notifications UI (1:1 like screenshot) ===== */
+#screen-notifications{ background:#fff; }
+
+.notifTop{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--blue);
+  color:#fff;
+  padding: calc(env(safe-area-inset-top) + 12px) var(--padX) 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 1px 0 rgba(0,0,0,.12);
+}
+.notifTitle{
+  font-size:20px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.notifIco{ font-size:20px; opacity:.95; }
+
+.notifActionRow{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  padding: 10px var(--padX);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.markReadBtn{
+  border:none;
+  background:transparent;
+  color:#1b87c9;
+  font-size:16px;
+  font-weight:500;
+  padding:6px 0;
+}
+
+.notifList{ background:#fff; }
+
+.notifItem{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding: 14px var(--padX);
+  border-bottom:1px solid var(--line);
+}
+.notifBell{
+  width:22px;
+  text-align:center;
+  font-size:18px;
+  opacity:.95;
+  flex:0 0 auto;
+}
+.notifText{
+  font-size:18px;
+  color:#111;
+  line-height:1.25;
+  flex:1;
+  min-width:0;
+}
+.notifItem.unread .notifText{
+  font-weight:800;
+}
+    
     /* ===== Screens (Bottom nav) ===== */
     .screen.hidden{ display:none; }
 
@@ -1593,16 +1663,82 @@
         </div>
       </section>
 
-      <!-- Notifications placeholder -->
-      <section id="screen-notifications" class="screen hidden">
-        <div class="sectionBar">
-          <div class="sectionTitle">Notifications</div>
-          <div class="chev"></div>
-        </div>
-        <div class="row" style="border-bottom:none;color:#777;font-weight:500;">
-          Notifications screen (placeholder).
-        </div>
-      </section>
+      <!-- ✅ REPLACE your current Notifications placeholder section with THIS (1:1 like the photo) -->
+<section id="screen-notifications" class="screen hidden">
+  <!-- Blue header -->
+  <div class="notifTop">
+    <div class="notifTitle"><span class="notifIco">🔔</span>Notifications</div>
+  </div>
+
+  <!-- White action row -->
+  <div class="notifActionRow">
+    <div></div>
+    <button class="markReadBtn" type="button" id="markAllRead">Mark all as read</button>
+  </div>
+
+  <!-- Notifications list -->
+  <div class="notifList" id="notifList">
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">New grade M3 - Езикът чрез литературата AE</div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">New grade Руски фолклор и традиции</div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">Профил История.</div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">New grade M4 - Култура и междукултурно AE</div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">Профил История.</div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">Задачи -14. 01. 2026 г.</div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">Зарачи</div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">Нова домашна работа по M1 - Власт и институции</div>
+    </div>
+
+    <div class="notifItem unread">
+      <div class="notifBell">🔔</div>
+      <div class="notifText"><b>Профил История.</b></div>
+    </div>
+
+    <div class="notifItem unread">
+      <div class="notifBell">🔔</div>
+      <div class="notifText"><b>Нова домашна работа по Английски език чрез културно-тво</b></div>
+    </div>
+
+    <div class="notifItem">
+      <div class="notifBell">🔔</div>
+      <div class="notifText">New review for Martin Stoilov</div>
+    </div>
+
+    <div class="notifItem" style="border-bottom:none;">
+      <div class="notifBell">🔔</div>
+      <div class="notifText"><b>New review for Martin Stoilov</b></div>
+    </div>
+  </div>
+</section>
 
       <!-- More placeholder -->
       <section id="screen-more" class="screen hidden">
@@ -1631,7 +1767,19 @@
 
   <script>
     const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+/* ✅ Mark all as read */
+const markAllReadBtn = document.getElementById("markAllRead");
+if (markAllReadBtn) {
+  markAllReadBtn.addEventListener("click", () => {
+    document.querySelectorAll("#notifList .notifItem.unread")
+      .forEach(el => el.classList.remove("unread"));
+
+    const badge = document.querySelector('.navItem[data-bottom="notifications"] .navBadge');
+    if (badge) badge.remove();
+  });
+}
 
     function setTopTab(tab){
       $$("#topTabs .topTab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));

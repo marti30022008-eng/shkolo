@@ -3,80 +3,52 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Diary</title>
 
-  <title>Shkolo</title>
-
-  <!-- iOS / PWA -->
+  <meta name="theme-color" content="#1b86c8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#1b87c9" />
-
-  <link rel="manifest" href="manifest.webmanifest" />
-
-  <!-- Icons (JPG) -->
-  <link rel="apple-touch-icon" sizes="180x180" href="180x180.jpg" />
-  <link rel="icon" type="image/jpeg" sizes="192x192" href="192x192.jpg" />
-  <link rel="icon" type="image/jpeg" sizes="512x512" href="512x512.jpg" />
 
   <style>
     :root{
-      --blue:#1b87c9;
-      --line:#e9e9e9;
+      --blue:#1b86c8;
       --bg:#ffffff;
-      --section:#f1f1f1;
+      --panel:#f2f2f2;
+      --line:#e5e5e5;
       --text:#111;
-      --muted:#8b8b8b;
+      --muted:#7f7f7f;
 
-      --green:#9dbb2e;   /* closer to screenshot "praise" green */
-      --orange:#f07f63;  /* closer to screenshot "remarks" orange */
-      --yellow:#f1c40f;
+      --bubble-blue:#2d79b9;
+      --bubble-green:#33b46e;
+      --bubble-red:#e25a55;
+      --bubble-yellow:#f2b01f;
+      --bubble-grey:#dfe3e8;
 
-      --tabInactive: rgba(255,255,255,.55);
-      --tabActive: rgba(255,255,255,.95);
-
-      --topH: 0px;       /* filled by JS */
-      --bottomH: 0px;    /* filled by JS */
-
-      --padX: 16px;
-
-      /* 1:1-ish sizing like your screenshots */
-      --topTitle: 20px;
-      --topClass: 18px;
-
-      --tabIcon: 20px;
-      --tabText: 13px;
-
-      --sectionTitle: 22px;
-
-      --rowTitle: 20px;
-      --rowMeta: 16px;
-      --badge: 28px;
+      --topH:150px;     /* overwritten by JS */
+      --bottomH:78px;   /* overwritten by JS */
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
-      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial;
       background:var(--bg);
       color:var(--text);
+      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial;
       -webkit-text-size-adjust:100%;
       overscroll-behavior:none;
     }
 
-    .app{ min-height:100vh; background:var(--bg); }
-
-    /* ===== Top bar ===== */
+    /* ===== Fixed header ===== */
     .top{
       position:fixed; left:0; right:0; top:0;
       z-index:50;
       background:var(--blue);
       color:#fff;
       padding-top: calc(env(safe-area-inset-top) + 10px);
-      padding-left: var(--padX);
-      padding-right: var(--padX);
       box-shadow: 0 1px 0 rgba(0,0,0,.12);
     }
+    .topInner{ padding: 0 14px 8px; }
 
     .topRow{
       display:flex;
@@ -84,493 +56,473 @@
       justify-content:space-between;
       padding: 6px 0 10px;
     }
-
     .classPick{
-      display:flex;
-      align-items:center;
-      gap:6px;
-      font-size:var(--topClass);
-      font-weight:500;
+      display:flex; align-items:center; gap:6px;
+      font-size:22px; font-weight:500;
       opacity:.95;
-      min-width:70px;
+      min-width:78px;
     }
     .caret{
       width:0;height:0;
-      border-left:5px solid transparent;
-      border-right:5px solid transparent;
-      border-top:6px solid rgba(255,255,255,.9);
-      margin-top:3px;
+      border-left:6px solid transparent;
+      border-right:6px solid transparent;
+      border-top:7px solid rgba(255,255,255,.92);
+      margin-top:4px;
     }
 
     .title{
       display:flex;
       align-items:center;
       gap:10px;
-      font-size:var(--topTitle);
+      font-size:26px;
       font-weight:500;
       opacity:.98;
+      margin-left:-6px;
     }
-
-    /* Notebook icon like screenshot */
-    .noteIco{
-      width:22px; height:22px;
-      border:2px solid rgba(255,255,255,.8);
-      border-radius:4px;
+    .titleIcon{
+      width:28px;height:28px;
+      border:2px solid rgba(255,255,255,.95);
+      border-radius:6px;
       position:relative;
       opacity:.95;
     }
-    .noteIco:before{
+    .titleIcon:before{
       content:"";
       position:absolute;
-      left:5px; top:3px; bottom:3px;
+      left:50%; top:3px; bottom:3px;
       width:2px;
-      background:rgba(255,255,255,.8);
+      background:rgba(255,255,255,.95);
+      transform:translateX(-50%);
     }
 
-    /* ===== Top tabs ===== */
-    .topTabs{
+    .topRight{
+      width:78px; /* keep center title centered */
+      display:flex; justify-content:flex-end;
+      opacity:.9;
+      font-size:14px;
+    }
+
+    /* ===== Top tab icons row ===== */
+    .tabRow{
       display:flex;
       align-items:flex-end;
       justify-content:space-between;
-      padding-bottom: 6px;
+      padding: 0 12px;
+      gap:6px;
     }
-    .topTab{
+    .tabBtn{
       flex:1;
+      padding: 8px 0 10px;
       text-align:center;
-      color:var(--tabInactive);
-      padding: 6px 0 2px;
-      font-size:var(--tabText);
-      font-weight:500;
+      color:rgba(255,255,255,.60);
       user-select:none;
       position:relative;
+      font-weight:500;
     }
-    .topTab .ico{
+    .tabBtn .ico{
       display:block;
-      font-size:var(--tabIcon);
-      line-height:var(--tabIcon);
+      font-size:18px;
+      line-height:18px;
       margin-bottom:4px;
       opacity:.95;
     }
-    .topTab.active{
-      color:var(--tabActive);
-      font-weight:600;
+    .tabBtn .lbl{
+      font-size:14px;
+      line-height:14px;
     }
-    .topTab.active:after{
+    .tabBtn.active{ color:#fff; }
+    .tabBtn.active:after{
       content:"";
       position:absolute;
-      left:18%;
-      right:18%;
-      bottom:-6px;
-      height:4px;
+      left:12%;
+      right:12%;
+      bottom:-1px;
+      height:3px;
+      border-radius:3px;
       background:#fff;
-      border-radius:4px 4px 0 0;
+      opacity:.95;
     }
 
-    /* ===== Content docking ===== */
-    main.content{
+    /* ===== Main content area (never hidden behind header/footer) ===== */
+    .content{
       padding-top: calc(var(--topH) + env(safe-area-inset-top));
       padding-bottom: calc(var(--bottomH) + env(safe-area-inset-bottom));
       background:var(--bg);
     }
 
-    /* ===== Section header bar ===== */
-    .sectionBar{
-      background:var(--section);
+    /* ===== Section header bar (First Term / Notes) ===== */
+    .bar{
+      background:var(--panel);
+      border-top:1px solid var(--line);
       border-bottom:1px solid var(--line);
-      padding: 14px var(--padX);
+      padding: 14px 14px;
       display:flex;
       align-items:center;
       justify-content:space-between;
     }
-    .sectionTitle{
-      font-size:var(--sectionTitle);
-      font-weight:600;
+    .bar .left{
       color:var(--blue);
+      font-weight:700;
+      font-size:22px;
     }
-    .chev{
-      width:10px;height:10px;
-      border-right:3px solid #7a7a7a;
-      border-bottom:3px solid #7a7a7a;
-      transform:rotate(45deg);
-      opacity:.9;
+    .bar .chev{
+      width:10px; height:10px;
+      border-right:3px solid #6f6f6f;
+      border-bottom:3px solid #6f6f6f;
+      transform: rotate(45deg);
+      opacity:.8;
     }
 
-    /* ===== List rows ===== */
-    .list{ background:#fff; }
-
+    /* ===== Lists ===== */
+    .list{ padding: 0; margin:0; }
     .row{
-      padding: 16px var(--padX);
+      padding: 14px 14px 14px;
       border-bottom:1px solid var(--line);
+      background:#fff;
     }
-
     .rowTop{
       display:flex;
-      align-items:flex-start;
       gap:10px;
+      align-items:flex-start;
     }
-
-    /* book icon (simple, consistent) */
     .book{
-      font-size:20px;
-      line-height:20px;
-      opacity:.9;
+      width:22px; height:22px;
       margin-top:2px;
-      width:22px;
-      text-align:center;
+      flex:0 0 auto;
+      opacity:.95;
     }
-
-    .rowTitle{
-      font-size:var(--rowTitle);
-      font-weight:700;
+    .titleTxt{
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:-0.2px;
       line-height:1.15;
-      letter-spacing:-.2px;
     }
 
-    /* Delay/Disrespect/Respect line */
-    .rowSub{
+    .rowBottom{
       margin-top:10px;
       display:flex;
       align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
+      gap:10px;
+      padding-left: 32px; /* aligns under title after icon */
     }
 
-    .label{
-      font-size:var(--rowMeta);
-      color:var(--muted);
+    .noRatings{
+      color:#9c9c9c;
+      font-size:18px;
       font-weight:500;
+      padding-left: 32px;
+      margin-top:10px;
     }
 
-    .badge{
-      width:var(--badge);
-      height:var(--badge);
+    /* ===== Rating bubbles ===== */
+    .bubble{
+      width:34px; height:34px;
       border-radius:999px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      font-size:15px;
-      font-weight:700;
-      color:#4a4a4a;
-      background:#e2e6ec; /* grey circles like screenshot */
+      font-weight:800;
+      font-size:18px;
+      color:#fff;
+      letter-spacing:-0.3px;
+    }
+    .b-blue{ background:var(--bubble-blue); }
+    .b-green{ background:var(--bubble-green); }
+    .b-red{ background:var(--bubble-red); }
+    .b-yellow{ background:var(--bubble-yellow); color:#1a1a1a; }
+    .b-grey{ background:var(--bubble-grey); color:#1a1a1a; }
+
+    /* ===== Absence counters (Delay / Disrespect. / Respect.) ===== */
+    .miniLbl{
+      font-size:18px;
+      color:#8a8a8a;
+      font-weight:500;
+      margin-right:6px;
+    }
+    .miniGroup{
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
 
-    .bGreen{ background: var(--green); color:#fff; }
-    .bOrange{ background: var(--orange); color:#fff; }
-    .bYellow{ background: var(--yellow); color:#222; }
-
-    .hidden{ display:none; }
-
     /* ===== Bottom nav ===== */
-    footer.bottomNav{
-      position:fixed;
-      left:0; right:0; bottom:0;
+    .bottomNav{
+      position:fixed; left:0; right:0; bottom:0;
       z-index:50;
       background:#fff;
       border-top:1px solid var(--line);
       padding-bottom: env(safe-area-inset-bottom);
     }
-
-    .navBar{
+    .bottomRow{
       display:flex;
-      align-items:flex-end;
       justify-content:space-around;
-      padding: 8px 8px 10px;
+      padding: 8px 6px 10px;
+      align-items:flex-end;
     }
-
-    .navItem{
-      width:25%;
+    .bItem{
+      width:20%;
       text-align:center;
       color:#9a9a9a;
-      font-size:12px;
-      font-weight:500;
+      font-weight:600;
       user-select:none;
-      position:relative;
     }
-    .navItem .nIco{
+    .bItem .bIco{
+      font-size:22px;
+      line-height:22px;
       display:block;
-      font-size:24px;
-      line-height:24px;
       margin-bottom:4px;
-      opacity:.95;
     }
-    .navItem.active{ color:var(--blue); }
-
-    .navBadge{
-      position:absolute;
-      top:-2px;
-      left:56%;
+    .bItem .bTxt{
+      font-size:14px;
+      line-height:14px;
+    }
+    .bItem.active{ color:var(--blue); }
+    .notifDot{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 2px 8px;
+      border-radius:999px;
       background:#e74c3c;
       color:#fff;
-      font-weight:700;
-      font-size:11px;
-      padding:2px 6px;
-      border-radius:999px;
-      border:2px solid #fff;
+      font-size:12px;
+      font-weight:800;
+      margin-left:6px;
+      transform: translateY(-6px);
     }
   </style>
 </head>
 
 <body>
-  <div class="app">
-
-    <!-- TOP HEADER -->
-    <header class="top" id="topBar">
+  <div class="top" id="top">
+    <div class="topInner">
       <div class="topRow">
         <div class="classPick">MC1 <span class="caret"></span></div>
-        <div class="title"><span class="noteIco"></span> Diary</div>
-        <div style="width:70px;"></div>
+        <div class="title"><span class="titleIcon"></span><span>Diary</span></div>
+        <div class="topRight"></div>
       </div>
 
-      <nav class="topTabs" id="topTabs">
-        <div class="topTab" data-tab="absences"><span class="ico">ℹ️</span>Absences</div>
-        <div class="topTab" data-tab="ratings"><span class="ico">✏️</span>Ratings</div>
-        <div class="topTab active" data-tab="reviews"><span class="ico">🏅</span>Reviews</div>
-        <div class="topTab" data-tab="timetable"><span class="ico">🕒</span>Timetable</div>
-        <div class="topTab" data-tab="homework"><span class="ico">📓</span>Homework</div>
-      </nav>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <main class="content" id="content">
-
-      <!-- ABSENCES (Notes) -->
-      <section id="view-absences" class="view hidden">
-        <div class="sectionBar">
-          <div class="sectionTitle">Notes</div>
-          <div class="chev"></div>
-        </div>
-
-        <div class="list">
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">TOTAL</div>
-                <div class="rowSub">
-                  <span class="label">Delay</span> <span class="badge bYellow">3</span>
-                  <span class="label">Disrespect.</span> <span class="badge bOrange">6</span>
-                  <span class="label">Respect.</span> <span class="badge bGreen">44</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Български език и литература</div>
-                <div class="rowSub">
-                  <span class="label">Delay</span> <span class="badge">0</span>
-                  <span class="label">Disrespect.</span> <span class="badge">0</span>
-                  <span class="label">Respect.</span> <span class="badge bGreen">3</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Английски език</div>
-                <div class="rowSub">
-                  <span class="label">Delay</span> <span class="badge">0</span>
-                  <span class="label">Disrespect.</span> <span class="badge">0</span>
-                  <span class="label">Respect.</span> <span class="badge bGreen">1</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Руски език</div>
-                <div class="rowSub">
-                  <span class="label">Delay</span> <span class="badge">0</span>
-                  <span class="label">Disrespect.</span> <span class="badge">0</span>
-                  <span class="label">Respect.</span> <span class="badge bGreen">2</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- RATINGS -->
-      <section id="view-ratings" class="view hidden">
-        <div class="sectionBar">
-          <div class="sectionTitle">First Term</div>
-          <div class="chev"></div>
-        </div>
-
-        <div class="list">
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Български език и литература</div>
-                <div class="rowSub">
-                  <span class="badge bOrange">3</span>
-                  <span class="badge" style="background:#2d8be0;color:#fff;">5</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Английски език</div>
-                <div class="rowSub">
-                  <span class="badge" style="background:#2d8be0;color:#fff;">5</span>
-                  <span class="badge bGreen">6</span>
-                  <span class="badge bGreen">6</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- REVIEWS -->
-      <section id="view-reviews" class="view">
-        <div class="sectionBar">
-          <div class="sectionTitle">TOTAL</div>
-          <div class="chev"></div>
-        </div>
-
-        <div class="list">
-          <!-- This matches the “Praise / Remarks 0 0” feel from your screenshot -->
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">TOTAL</div>
-                <div class="rowSub">
-                  <span class="label">Praise</span> <span class="badge bGreen">7</span>
-                  <span class="label">Remarks</span> <span class="badge bOrange">9</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Общи отзиви</div>
-                <div class="rowSub">
-                  <span class="label">Praise</span> <span class="badge">0</span>
-                  <span class="label">Remarks</span> <span class="badge">0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Български език и литература</div>
-                <div class="rowSub">
-                  <span class="label">Praise</span> <span class="badge bGreen">1</span>
-                  <span class="label">Remarks</span> <span class="badge bOrange">1</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="rowTop">
-              <div class="book">📖</div>
-              <div style="flex:1">
-                <div class="rowTitle">Английски език</div>
-                <div class="rowSub">
-                  <span class="label">Praise</span> <span class="badge">0</span>
-                  <span class="label">Remarks</span> <span class="badge bOrange">3</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- TIMETABLE -->
-      <section id="view-timetable" class="view hidden">
-        <div class="sectionBar">
-          <div class="sectionTitle">Timetable</div>
-          <div class="chev"></div>
-        </div>
-        <div class="row" style="border-bottom:none;color:#777;font-weight:500;">
-          Timetable screen (placeholder).
-        </div>
-      </section>
-
-      <!-- HOMEWORK -->
-      <section id="view-homework" class="view hidden">
-        <div class="sectionBar">
-          <div class="sectionTitle">Homework</div>
-          <div class="chev"></div>
-        </div>
-        <div class="row" style="border-bottom:none;color:#777;font-weight:500;">
-          Homework screen (placeholder).
-        </div>
-      </section>
-
-    </main>
-
-    <!-- BOTTOM NAV -->
-    <footer class="bottomNav" id="bottomBar">
-      <div class="navBar">
-        <div class="navItem active"><span class="nIco">📘</span>Diary</div>
-        <div class="navItem"><span class="nIco">💬</span>Discussions</div>
-        <div class="navItem"><span class="nIco">🔔</span>Notifications <span class="navBadge">9+</span></div>
-        <div class="navItem"><span class="nIco">⋯</span>More</div>
+      <div class="tabRow" id="tabs">
+        <div class="tabBtn active" data-tab="absences"><span class="ico">ℹ️</span><span class="lbl">Absences</span></div>
+        <div class="tabBtn" data-tab="ratings"><span class="ico">✏️</span><span class="lbl">Ratings</span></div>
+        <div class="tabBtn" data-tab="reviews"><span class="ico">🏅</span><span class="lbl">Reviews</span></div>
+        <div class="tabBtn" data-tab="timetable"><span class="ico">🕒</span><span class="lbl">Timetable</span></div>
+        <div class="tabBtn" data-tab="homework"><span class="ico">📓</span><span class="lbl">Homework</span></div>
       </div>
-    </footer>
+    </div>
+  </div>
 
+  <div class="content" id="content">
+    <!-- injected -->
+  </div>
+
+  <div class="bottomNav" id="bottomNav">
+    <div class="bottomRow">
+      <div class="bItem active"><span class="bIco">📘</span><span class="bTxt">Diary</span></div>
+      <div class="bItem"><span class="bIco">💬</span><span class="bTxt">Discussions</span></div>
+      <div class="bItem"><span class="bIco">🔔<span class="notifDot">9+</span></span><span class="bTxt">Notifications</span></div>
+      <div class="bItem"><span class="bIco">⋯</span><span class="bTxt">More</span></div>
+    </div>
   </div>
 
   <script>
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    /* ===== DATA (matches your screenshots) ===== */
 
-    function setTopTab(tab){
-      $$("#topTabs .topTab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
-      $("#view-absences").classList.toggle("hidden", tab !== "absences");
-      $("#view-ratings").classList.toggle("hidden", tab !== "ratings");
-      $("#view-reviews").classList.toggle("hidden", tab !== "reviews");
-      $("#view-timetable").classList.toggle("hidden", tab !== "timetable");
-      $("#view-homework").classList.toggle("hidden", tab !== "homework");
+    // Ratings screen (First Term)
+    const ratingsFirstTerm = [
+      { title: "МОДУЛ 3 - Човек и общество (IUCH - PP (req module)) (История и цивилизации)", grades: [{v:5,c:"b-blue"}] },
+      { title: "Държави, общества и култури от Античността до Новото време (IUCH - PP (selectable module)) (История и цивилизации)", grades: [{v:6,c:"b-green"},{v:6,c:"b-green"}] },
+      { title: "Български език и литература (IUCH - RP/UP-A)", grades: [{v:2,c:"b-red"}] },
+      { title: "Спортни дейности (волейбол) (...)", grades: null },
+      { title: "Безопасност на движението (...)", grades: null },
+      { title: "Час на класа (...)", grades: null },
+
+      { title: "МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Руски език)", grades: [{v:5,c:"b-blue"}] },
+      { title: "Руски фолклор и традиции (IUCH - PP (selectable module)) (Руски език)", grades: [{v:6,c:"b-green"},{v:6,c:"b-green"}] },
+      { title: "История и цивилизации (IUCH - PP)", grades: null },
+      { title: "МОДУЛ 1 - Власт и институции (IUCH - PP (req module)) (История и цивилизации)", grades: [{v:5,c:"b-blue"},{v:6,c:"b-green"},{v:6,c:"b-green"}] },
+      { title: "МОДУЛ 2 - Култура и духовност (IUCH - PP (req module)) (История и цивилизации)", grades: [{v:5,c:"b-blue"}] },
+
+      { title: "МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Английски език)", grades: [{v:5,c:"b-blue"}] },
+      { title: "МОДУЛ 3 - Езикът чрез литературата (IUCH - PP (req module)) (Английски език)", grades: [{v:6,c:"b-green"}] },
+      { title: "МОДУЛ 4 - Култура и междукултурно общуване (IUCH - PP (req module)) (Английски език)", grades: [{v:4,c:"b-yellow"}] },
+      { title: "Английски език чрез културно-творческо интегрирано обучение (IUCH - PP (selectable module)) (Английски език)", grades: null },
+      { title: "Руски език (IUCH - PP)", grades: null },
+      { title: "МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Руски език)", grades: [{v:6,c:"b-green"},{v:2,c:"b-red"},{v:5,c:"b-blue"}] },
+
+      { title: "Български език и литература", grades: [{v:3,c:"b-red"},{v:5,c:"b-blue"}] },
+      { title: "Английски език", grades: [{v:5,c:"b-blue"},{v:6,c:"b-green"},{v:6,c:"b-green"}] },
+      { title: "Руски език", grades: [{v:5,c:"b-blue"},{v:3,c:"b-red"}] },
+      { title: "Математика", grades: [{v:2,c:"b-red"},{v:6,c:"b-green"},{v:5,c:"b-blue"}] },
+      { title: "Гражданско образование", grades: [{v:3,c:"b-red"},{v:2,c:"b-red"},{v:3,c:"b-red"}] },
+      { title: "Физическо възпитание и спорт", grades: [{v:6,c:"b-green"}] },
+      { title: "Английски език (IUCH - PP)", grades: null },
+      { title: "МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)", grades: [{v:6,c:"b-green"},{v:6,c:"b-green"}] }
+    ];
+
+    // Absences / Notes (Delay, Disrespect., Respect.)
+    const absencesNotes = [
+      { title: "TOTAL", delay: 3, disrespect: 6, respect: 44 },
+      { title: "Български език и литература", delay: 0, disrespect: 0, respect: 3 },
+      { title: "Английски език", delay: 0, disrespect: 0, respect: 1 },
+      { title: "Руски език", delay: 0, disrespect: 0, respect: 2 },
+      { title: "Математика", delay: 0, disrespect: 0, respect: 3 },
+      { title: "Гражданско образование", delay: 2, disrespect: 1, respect: 0 },
+      { title: "Физическо възпитание и спорт", delay: 1, disrespect: 0, respect: 4 },
+      { title: "МОДУЛ 3 - Човек и общество (IUCH - PP (req module)) (История и цивилизации)", delay: 0, disrespect: 0, respect: 1 },
+      { title: "Държави, общества и култури от Античността до Новото време (IUCH - PP (selectable module)) (История и цивилизации)", delay: 0, disrespect: 0, respect: 0 },
+      { title: "Български език и литература (IUCH - RP/UP-A)", delay: 0, disrespect: 0, respect: 3 },
+      { title: "Спортни дейности (волейбол) (...)", delay: 0, disrespect: 3, respect: 2 },
+      { title: "Безопасност на движението (...)", delay: 0, disrespect: 0, respect: 0 },
+      { title: "Час на класа (...)", delay: 0, disrespect: 0, respect: 1 },
+      { title: "Руски фолклор и традиции (IUCH - PP (selectable module)) (Руски език)", delay: 0, disrespect: 1, respect: 4 },
+      { title: "История и цивилизации (IUCH - PP)", delay: 0, disrespect: 0, respect: 0 },
+      { title: "МОДУЛ 1 - Власт и институции (IUCH - PP (req module)) (История и цивилизации)", delay: 0, disrespect: 0, respect: 2 },
+      { title: "МОДУЛ 2 - Култура и духовност (IUCH - PP (req module)) (История и цивилизации)", delay: 0, disrespect: 0, respect: 1 },
+      { title: "МОДУЛ 4 - Култура и междукултурно общуване (IUCH - PP (req module)) (Английски език)", delay: 0, disrespect: 0, respect: 2 },
+      { title: "Английски език чрез културно-творческо интегрирано обучение (IUCH - PP (selectable module)) (Английски език)", delay: 0, disrespect: 0, respect: 4 },
+      { title: "Руски език (IUCH - PP)", delay: 0, disrespect: 0, respect: 0 },
+      { title: "МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Руски език)", delay: 0, disrespect: 1, respect: 5 },
+      { title: "МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Руски език)", delay: 0, disrespect: 0, respect: 5 }
+    ];
+
+    /* ===== UI RENDERERS ===== */
+
+    const content = document.getElementById("content");
+    const tabs = document.getElementById("tabs");
+
+    function bookSvg(){
+      return `
+        <svg class="book" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 4.5h10.5c1.1 0 2 .9 2 2v13.5c-.8-.5-1.8-.8-3-.8H6c-1.7 0-3 .9-3 2V6.5c0-1.1.9-2 2-2h1z" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M6 4.5v15" stroke="#111" stroke-width="1.8"/>
+        </svg>
+      `;
     }
 
-    // Top tabs
-    $$("#topTabs .topTab").forEach(t => t.addEventListener("click", () => setTopTab(t.dataset.tab)));
-
-    // Perfect docking: measure real bars
-    function measureBars(){
-      const top = $("#topBar");
-      const bottom = $("#bottomBar");
-      const topH = top ? top.getBoundingClientRect().height : 0;
-      const bottomH = bottom ? bottom.getBoundingClientRect().height : 0;
-      document.documentElement.style.setProperty("--topH", topH + "px");
-      document.documentElement.style.setProperty("--bottomH", bottomH + "px");
+    function bubble(v, c){
+      return `<span class="bubble ${c}">${v}</span>`;
     }
-    window.addEventListener("load", () => {
-      measureBars();
-      setTopTab("reviews"); // default like your screenshot
-      // service worker
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("./sw.js").catch(()=>{});
+
+    function renderRatings(){
+      content.innerHTML = `
+        <div class="bar">
+          <div class="left">First Term</div>
+          <div class="chev" aria-hidden="true"></div>
+        </div>
+
+        <div class="list">
+          ${ratingsFirstTerm.map(item => {
+            const top = `
+              <div class="rowTop">
+                ${bookSvg()}
+                <div class="titleTxt">${item.title}</div>
+              </div>
+            `;
+            const bottom = item.grades
+              ? `<div class="rowBottom">${item.grades.map(g => bubble(g.v, g.c)).join("")}</div>`
+              : `<div class="noRatings">No ratings</div>`;
+            return `<div class="row">${top}${bottom}</div>`;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function miniBubble(num, kind){
+      if(kind === "delay"){
+        return `<span class="bubble b-yellow">${num}</span>`;
       }
+      if(kind === "disrespect"){
+        return `<span class="bubble b-red">${num}</span>`;
+      }
+      return `<span class="bubble b-green">${num}</span>`;
+    }
+
+    function renderAbsences(){
+      content.innerHTML = `
+        <div class="bar">
+          <div class="left">Notes</div>
+          <div class="chev" aria-hidden="true"></div>
+        </div>
+
+        <div class="list">
+          ${absencesNotes.map(item => {
+            return `
+              <div class="row">
+                <div class="rowTop">
+                  ${bookSvg()}
+                  <div class="titleTxt">${item.title}</div>
+                </div>
+
+                <div class="rowBottom">
+                  <div class="miniGroup">
+                    <span class="miniLbl">Delay</span>
+                    ${miniBubble(item.delay, "delay")}
+                  </div>
+
+                  <div class="miniGroup">
+                    <span class="miniLbl">Disrespect.</span>
+                    ${miniBubble(item.disrespect, "disrespect")}
+                  </div>
+
+                  <div class="miniGroup">
+                    <span class="miniLbl">Respect.</span>
+                    ${miniBubble(item.respect, "respect")}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function renderPlaceholder(label){
+      content.innerHTML = `
+        <div class="bar">
+          <div class="left">${label}</div>
+          <div class="chev" aria-hidden="true"></div>
+        </div>
+        <div class="row" style="border-bottom:none;">
+          <div style="font-size:18px;color:#9c9c9c;font-weight:600;">(placeholder)</div>
+        </div>
+      `;
+    }
+
+    function setActive(tabName){
+      [...tabs.querySelectorAll(".tabBtn")].forEach(b => {
+        b.classList.toggle("active", b.dataset.tab === tabName);
+      });
+
+      if(tabName === "ratings") renderRatings();
+      else if(tabName === "absences") renderAbsences();
+      else if(tabName === "reviews") renderPlaceholder("Reviews");
+      else if(tabName === "timetable") renderPlaceholder("Timetable");
+      else if(tabName === "homework") renderPlaceholder("Homework");
+
+      window.scrollTo({top:0, behavior:"instant"});
+    }
+
+    tabs.addEventListener("click", (e) => {
+      const btn = e.target.closest(".tabBtn");
+      if(!btn) return;
+      setActive(btn.dataset.tab);
     });
-    window.addEventListener("resize", measureBars);
+
+    /* ===== Fix the “missing / cut” issue: auto-measure header/footer ===== */
+    function measure(){
+      const top = document.getElementById("top");
+      const bottom = document.getElementById("bottomNav");
+      const topH = top.getBoundingClientRect().height;
+      const bottomH = bottom.getBoundingClientRect().height;
+      document.documentElement.style.setProperty("--topH", `${topH}px`);
+      document.documentElement.style.setProperty("--bottomH", `${bottomH}px`);
+    }
+    window.addEventListener("resize", measure);
+
+    // Initial render
+    measure();
+    setActive("absences");
   </script>
 </body>
 </html>

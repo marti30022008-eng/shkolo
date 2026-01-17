@@ -1,695 +1,552 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Diary</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Diary UI</title>
   <style>
     :root{
-      --blue:#1f86b6;
-      --blue-dark:#1678a6;
-
+      --blue:#2a86b5;
+      --bg:#f3f3f3;
+      --card:#ffffff;
+      --line:#e6e6e6;
       --text:#111;
-      --muted:#7c7c7c;
-      --line:#e9e9e9;
-      --bg:#ffffff;
-      --panel:#f2f2f2;
+      --muted:#7a7a7a;
 
-      --c-yellow:#f2b01e;
-      --c-red:#e2524c;
-      --c-green:#39b36a;
-      --c-gray:#d9d9d9;
+      --chip-yellow:#f3b21b;
+      --chip-red:#e2574c;
+      --chip-green:#2fb56a;
+      --chip-gray:#cfcfcf;
 
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bot: env(safe-area-inset-bottom, 0px);
+      --rating-blue:#2e7dc0;
+      --rating-green:#2fb56a;
+      --rating-red:#e2574c;
+      --rating-yellow:#f3b21b;
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
     body{
       margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       background:#fff;
       color:var(--text);
-      font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
-    /* APP FRAME */
-    .app{
-      min-height:100vh;
-      background:var(--bg);
+    /* Simulated phone viewport (remove if embedding into your app shell) */
+    .phone{
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background:#fff;
       display:flex;
       flex-direction:column;
     }
 
-    /* TOP BLUE BAR */
-    .topbar{
+    /* Top blue header */
+    .top{
       background:var(--blue);
-      padding-top: calc(var(--safe-top) + 14px);
-      padding-left: 16px;
-      padding-right: 16px;
-      padding-bottom: 10px;
       color:#fff;
+      padding: 12px 14px 10px;
     }
-    .topbar-row{
+    .topRow{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
+      padding-top: 6px;
     }
-    .school{
-      font-weight:700;
-      font-size:22px;
-      letter-spacing:.2px;
+    .mc{
+      font-weight:800;
+      font-size:34px;
+      letter-spacing:0.5px;
       display:flex;
       align-items:center;
-      gap:6px;
+      gap:8px;
     }
-    .caret{
-      width:0;height:0;
-      border-left:5px solid transparent;
-      border-right:5px solid transparent;
-      border-top:6px solid rgba(255,255,255,.95);
-      margin-top:4px;
+    .mc .caret{
+      font-size:18px;
+      opacity:.95;
+      transform: translateY(2px);
     }
     .title{
       display:flex;
       align-items:center;
       gap:10px;
-      font-size:28px;
-      font-weight:500;
-      opacity:.95;
+      font-weight:700;
+      font-size:38px;
+      letter-spacing:0.2px;
     }
-    .title .book{
-      width:30px;height:30px;
-      border:2px solid rgba(255,255,255,.85);
-      border-radius:6px;
-      position:relative;
-      transform:translateY(1px);
+    .title .icon{
+      width:42px;height:42px;
+      border:3px solid rgba(255,255,255,.7);
+      border-radius:8px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      line-height:1;
+      transform: translateY(1px);
     }
-    .title .book:before{
-      content:"";
-      position:absolute;
-      left:50%;
-      top:4px;
-      bottom:4px;
-      width:2px;
-      background:rgba(255,255,255,.75);
-      transform:translateX(-50%);
+    .status{
+      width:64px;
     }
 
-    /* TOP TABS */
+    /* Tabs in blue header */
     .tabs{
-      margin-top:10px;
       display:flex;
       justify-content:space-between;
-      align-items:flex-end;
-      gap:8px;
-      padding: 0 6px;
+      gap:6px;
+      margin-top: 10px;
+      padding: 6px 0 0;
     }
     .tab{
       flex:1;
       text-align:center;
       color:rgba(255,255,255,.65);
-      padding: 6px 0 10px;
+      font-weight:700;
+      padding: 6px 2px 10px;
       position:relative;
       user-select:none;
-      cursor:pointer;
     }
-    .tab .ico{
-      font-size:24px;
-      line-height:1;
+    .tab .ticon{
       display:block;
-      margin-bottom:4px;
-      filter:saturate(.95);
-    }
-    .tab .lbl{
-      font-size:15px;
-      font-weight:600;
-      letter-spacing:.1px;
+      font-size:26px;
+      margin-bottom:3px;
+      filter: saturate(0.95);
+      opacity:.95;
     }
     .tab.active{
       color:#fff;
     }
-    .tab.active:after{
+    .tab.active::after{
       content:"";
       position:absolute;
-      left:14%;
-      right:14%;
+      left:18%;
+      right:18%;
       bottom:0;
-      height:3px;
+      height:4px;
       background:#fff;
       border-radius:3px;
+      opacity:.9;
     }
 
-    /* CONTENT */
+    /* Content area */
     .content{
-      flex:1;
       background:#fff;
-      padding-bottom: calc(78px + var(--safe-bot));
+      padding-bottom: 84px; /* room for bottom nav */
+      flex:1;
     }
 
-    /* Section header like “Notes” / “First Term” */
-    .section-head{
+    /* Section header ("Notes" / "First Term") */
+    .sectionBar{
+      background:var(--bg);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 16px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding: 18px 18px 14px;
-      border-bottom:1px solid var(--line);
-      background:linear-gradient(#fff,#fff);
     }
-    .section-head .h{
-      font-size:36px;
-      font-weight:800;
-      color:#1b79a9;
+    .sectionBar .label{
+      font-size:52px;
+      font-weight:900;
+      color:#2a86b5;
       letter-spacing:.2px;
     }
-    .section-head .chev{
-      width: 10px;
-      height: 10px;
-      border-right:3px solid #7a7a7a;
-      border-bottom:3px solid #7a7a7a;
-      transform: rotate(45deg);
-      margin-right:6px;
-      opacity:.8;
-    }
-    .section-head.small .h{
+    .sectionBar.compact .label{
       font-size:34px;
-      color:#1b79a9;
+      font-weight:900;
     }
-    .section-head.gray{
-      background: var(--panel);
-      border-top:1px solid var(--line);
-      border-bottom:1px solid var(--line);
-      padding: 16px 18px 12px;
-    }
-    .section-head.gray .h{
-      color:#1b79a9;
-      font-size:36px;
-    }
-    .section-head.gray .chev{
-      transform: rotate(135deg); /* down-ish like in screenshots */
+    .sectionBar .arrow{
+      font-size:30px;
+      color:#7b7b7b;
+      font-weight:900;
+      transform: translateY(2px);
     }
 
-    /* LIST */
+    /* List items */
     .list{
-      padding: 0;
-      margin: 0;
-      list-style:none;
-    }
-
-    /* Card rows – spacing tuned to match the screenshots */
-    .row{
-      padding: 18px 18px 14px;
-      border-bottom:1px solid var(--line);
       background:#fff;
     }
-    .row-title{
+    .item{
+      padding: 18px 16px 14px;
+      border-bottom: 2px solid #efefef;
+    }
+    .itemTop{
       display:flex;
-      gap:12px;
       align-items:flex-start;
-      margin-bottom: 12px;
+      gap:12px;
     }
-    .row-title .icon{
-      font-size:26px;
-      line-height:1;
-      margin-top:2px;
+    .book{
+      font-size:30px;
+      width:34px;
+      transform: translateY(2px);
       opacity:.95;
-      width:26px;
-      text-align:center;
     }
-    .row-title .t{
-      font-size:32px;
+    .name{
       font-weight:900;
-      line-height:1.08;
+      font-size:44px;
+      line-height:1.05;
       letter-spacing:.1px;
+      margin-top:2px;
+      word-break: break-word;
+    }
+    .name.small{
+      font-size:28px;
+      font-weight:800;
+      line-height:1.1;
     }
 
-    /* Labels row */
+    /* Metrics row — THIS is the critical fix (no overlaps) */
     .metrics{
-      display:flex;
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns:
+        max-content 54px
+        max-content 54px
+        max-content 62px;
+      column-gap: 14px;
+      row-gap: 8px;
       align-items:center;
-      gap: 18px;
-      padding-left: 38px; /* aligns under title text after icon */
-    }
-    .metric{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      min-width: 92px;
-    }
-    .metric .name{
-      font-size:22px;
-      color:#7b7b7b;
-      font-weight:600;
+      color:var(--muted);
+      font-weight:800;
+      font-size:30px;
+      line-height:1;
       white-space:nowrap;
     }
+    .metrics .mLabel{
+      color:#7a7a7a;
+      font-weight:800;
+    }
     .dot{
-      width:46px;
-      height:46px;
+      width:54px;height:54px;
       border-radius:50%;
-      display:flex;
+      display:inline-flex;
       align-items:center;
       justify-content:center;
       font-weight:900;
-      font-size:22px;
+      font-size:28px;
       color:#fff;
-      flex:0 0 46px;
+      transform: translateY(-1px);
+      flex:0 0 auto;
     }
-    .dot.gray{ background:var(--c-gray); color:#6e6e6e; font-weight:800; }
-    .dot.yellow{ background:var(--c-yellow); }
-    .dot.red{ background:var(--c-red); }
-    .dot.green{ background:var(--c-green); }
+    .dot.yellow{ background:var(--chip-yellow); }
+    .dot.red{ background:var(--chip-red); }
+    .dot.green{ background:var(--chip-green); }
+    .dot.gray{ background:var(--chip-gray); color:#4a4a4a; font-weight:900; }
 
-    /* RATINGS rows */
-    .grades{
+    /* Ratings chips */
+    .gradesRow{
+      margin-top: 12px;
       display:flex;
-      align-items:center;
       gap:12px;
-      padding-left: 38px;
+      align-items:center;
+      flex-wrap:wrap;
     }
-    .grade{
-      width:48px;
-      height:48px;
+    .gdot{
+      width:46px;height:46px;
       border-radius:50%;
-      display:flex;
+      display:inline-flex;
       align-items:center;
       justify-content:center;
-      color:#fff;
       font-weight:900;
+      color:#fff;
       font-size:22px;
     }
-    .grade.blue{ background:#2f7fbd; }
-    .grade.green{ background:var(--c-green); }
-    .grade.red{ background:var(--c-red); }
-    .grade.orange{ background:#f08a3a; }
-    .grade.gray{ background:var(--c-gray); color:#6e6e6e; font-weight:800; }
-
-    .noratings{
-      padding-left:38px;
+    .gdot.blue{ background:var(--rating-blue); }
+    .gdot.green{ background:var(--rating-green); }
+    .gdot.red{ background:var(--rating-red); }
+    .gdot.yellow{ background:var(--rating-yellow); color:#fff; }
+    .noRatings{
+      margin-top: 10px;
+      color:#888;
+      font-weight:700;
       font-size:22px;
-      color:#8c8c8c;
-      font-weight:600;
-      margin-top: 2px;
     }
 
     /* Bottom nav */
-    .bottom{
-      position:fixed;
-      left:0; right:0; bottom:0;
-      padding-bottom: var(--safe-bot);
+    .bottomNav{
+      position:sticky;
+      bottom:0;
       background:#fff;
-      border-top:1px solid var(--line);
-      height:78px;
+      border-top: 1px solid var(--line);
+      padding: 10px 10px 12px;
       display:flex;
-      align-items:flex-start;
       justify-content:space-around;
-      padding-top:10px;
+      align-items:flex-end;
+      gap:8px;
     }
-    .btab{
+    .bItem{
       width:20%;
       text-align:center;
-      color:#9b9b9b;
-      font-weight:700;
-      font-size:14px;
+      color:#9a9a9a;
+      font-weight:800;
+      font-size:18px;
       user-select:none;
-      cursor:pointer;
-      position:relative;
     }
-    .btab .bico{
-      font-size:26px;
-      line-height:1;
+    .bItem .bIcon{
       display:block;
-      margin-bottom:6px;
+      font-size:30px;
+      margin-bottom:4px;
+      filter:saturate(.95);
+      opacity:.95;
     }
-    .btab.active{ color:#1b79a9; }
+    .bItem.active{
+      color:#2a86b5;
+    }
     .badge{
-      position:absolute;
-      top:-2px;
-      right:22px;
-      background:#d94841;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      background:#e2574c;
       color:#fff;
-      font-weight:900;
-      font-size:14px;
       border-radius:18px;
-      padding:4px 8px;
-      border:2px solid #fff;
+      padding: 2px 8px;
+      font-size:14px;
+      font-weight:900;
+      margin-left:6px;
+      transform: translateY(-10px);
     }
 
-    /* Hide/show pages */
-    .page{ display:none; }
-    .page.active{ display:block; }
-
-    /* Make it feel like iOS spacing */
-    @media (max-width:420px){
-      .row-title .t{ font-size:30px; }
-      .metric .name{ font-size:21px; }
-      .dot{ width:44px;height:44px;font-size:21px; flex-basis:44px; }
-      .grade{ width:46px;height:46px;font-size:21px; }
-      .section-head .h{ font-size:34px; }
-    }
+    /* Views */
+    .view{ display:none; }
+    .view.active{ display:block; }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="topbar-row">
-        <div class="school">MC1 <span class="caret"></span></div>
-        <div class="title">
-          <span class="book" aria-hidden="true"></span>
-          <span>Diary</span>
-        </div>
-        <div style="width:40px;"></div>
+  <div class="phone">
+    <div class="top">
+      <div class="topRow">
+        <div class="mc">MC1 <span class="caret">▼</span></div>
+        <div class="title"><span class="icon">📘</span>Diary</div>
+        <div class="status"></div>
       </div>
 
-      <nav class="tabs" id="topTabs">
-        <div class="tab active" data-page="absences">
-          <span class="ico">❗️</span>
-          <span class="lbl">Absences</span>
-        </div>
-        <div class="tab" data-page="ratings">
-          <span class="ico">✏️</span>
-          <span class="lbl">Ratings</span>
-        </div>
-        <div class="tab" data-page="reviews">
-          <span class="ico">🏅</span>
-          <span class="lbl">Reviews</span>
-        </div>
-        <div class="tab" data-page="timetable">
-          <span class="ico">🕒</span>
-          <span class="lbl">Timetable</span>
-        </div>
-        <div class="tab" data-page="homework">
-          <span class="ico">📓</span>
-          <span class="lbl">Homework</span>
-        </div>
-      </nav>
-    </header>
-
-    <main class="content">
-      <!-- ABSENCES -->
-      <section class="page active" id="absences">
-        <div class="section-head gray">
-          <div class="h">Notes</div>
-          <div class="chev" aria-hidden="true"></div>
-        </div>
-
-        <ul class="list" id="absencesList"></ul>
-      </section>
-
-      <!-- RATINGS -->
-      <section class="page" id="ratings">
-        <div class="section-head small">
-          <div class="h">First Term</div>
-          <div class="chev" aria-hidden="true" style="transform:rotate(135deg)"></div>
-        </div>
-
-        <ul class="list" id="ratingsList"></ul>
-      </section>
-
-      <!-- REVIEWS (placeholder but same layout style) -->
-      <section class="page" id="reviews">
-        <div class="section-head gray">
-          <div class="h">Notes</div>
-          <div class="chev" aria-hidden="true"></div>
-        </div>
-
-        <ul class="list">
-          <li class="row">
-            <div class="row-title">
-              <div class="icon">📖</div>
-              <div class="t">TOTAL</div>
-            </div>
-            <div class="metrics">
-              <div class="metric">
-                <div class="name">Praise</div>
-                <div class="dot green">7</div>
-              </div>
-              <div class="metric">
-                <div class="name">Remarks</div>
-                <div class="dot red">9</div>
-              </div>
-            </div>
-          </li>
-
-          <li class="row">
-            <div class="row-title">
-              <div class="icon">📖</div>
-              <div class="t">Общи отзиви</div>
-            </div>
-            <div class="metrics">
-              <div class="metric">
-                <div class="name">Praise</div>
-                <div class="dot gray">0</div>
-              </div>
-              <div class="metric">
-                <div class="name">Remarks</div>
-                <div class="dot gray">0</div>
-              </div>
-            </div>
-          </li>
-
-          <li class="row">
-            <div class="row-title">
-              <div class="icon">📖</div>
-              <div class="t">Български език и литература</div>
-            </div>
-            <div class="metrics">
-              <div class="metric">
-                <div class="name">Praise</div>
-                <div class="dot green">1</div>
-              </div>
-              <div class="metric">
-                <div class="name">Remarks</div>
-                <div class="dot red">1</div>
-              </div>
-            </div>
-          </li>
-
-          <li class="row">
-            <div class="row-title">
-              <div class="icon">📖</div>
-              <div class="t">Английски език</div>
-            </div>
-            <div class="metrics">
-              <div class="metric">
-                <div class="name">Praise</div>
-                <div class="dot gray">0</div>
-              </div>
-              <div class="metric">
-                <div class="name">Remarks</div>
-                <div class="dot red">3</div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </section>
-
-      <!-- TIMETABLE / HOMEWORK placeholders -->
-      <section class="page" id="timetable">
-        <div class="section-head gray">
-          <div class="h">Timetable</div>
-          <div class="chev" aria-hidden="true" style="opacity:.0"></div>
-        </div>
-        <div style="padding:18px;color:#777;font-size:18px;font-weight:600;">(placeholder)</div>
-      </section>
-
-      <section class="page" id="homework">
-        <div class="section-head gray">
-          <div class="h">Homework</div>
-          <div class="chev" aria-hidden="true" style="opacity:.0"></div>
-        </div>
-        <div style="padding:18px;color:#777;font-size:18px;font-weight:600;">(placeholder)</div>
-      </section>
-    </main>
-
-    <!-- bottom nav like in screenshot -->
-    <footer class="bottom">
-      <div class="btab active">
-        <span class="bico">📘</span>
-        <span>Diary</span>
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-view="absences"><span class="ticon">❗</span>Absences</div>
+        <div class="tab" data-view="ratings"><span class="ticon">✏️</span>Ratings</div>
+        <div class="tab" data-view="reviews"><span class="ticon">🏅</span>Reviews</div>
+        <div class="tab" data-view="timetable"><span class="ticon">🕒</span>Timetable</div>
+        <div class="tab" data-view="homework"><span class="ticon">📓</span>Homework</div>
       </div>
-      <div class="btab">
-        <span class="bico">💬</span>
-        <span>Discussions</span>
+    </div>
+
+    <div class="content">
+
+      <!-- ABSENCES VIEW -->
+      <div class="view active" id="view-absences">
+        <div class="sectionBar">
+          <div class="label">Notes</div>
+          <div class="arrow">‹</div>
+        </div>
+        <div class="list" id="absencesList"></div>
       </div>
-      <div class="btab" style="position:relative;">
-        <span class="bico">🔔</span>
-        <span>Notifications</span>
-        <span class="badge">9+</span>
+
+      <!-- RATINGS VIEW -->
+      <div class="view" id="view-ratings">
+        <div class="sectionBar compact">
+          <div class="label">First Term</div>
+          <div class="arrow">˅</div>
+        </div>
+        <div class="list" id="ratingsList"></div>
       </div>
-      <div class="btab">
-        <span class="bico">⋯</span>
-        <span>More</span>
+
+      <!-- PLACEHOLDER VIEWS -->
+      <div class="view" id="view-reviews">
+        <div class="sectionBar compact">
+          <div class="label">Reviews</div>
+          <div class="arrow">˅</div>
+        </div>
+        <div class="list">
+          <div class="item">
+            <div class="name small">TOTAL</div>
+            <div style="margin-top:10px;color:#777;font-weight:700;">(stub) Hook your reviews data here.</div>
+          </div>
+        </div>
       </div>
-    </footer>
+
+      <div class="view" id="view-timetable">
+        <div class="sectionBar compact">
+          <div class="label">Timetable</div>
+          <div class="arrow">˅</div>
+        </div>
+        <div class="list">
+          <div class="item">
+            <div style="color:#777;font-weight:700;">(stub) Timetable view.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-homework">
+        <div class="sectionBar compact">
+          <div class="label">Homework</div>
+          <div class="arrow">˅</div>
+        </div>
+        <div class="list">
+          <div class="item">
+            <div style="color:#777;font-weight:700;">(stub) Homework view.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottomNav">
+      <div class="bItem active"><span class="bIcon">📘</span>Diary</div>
+      <div class="bItem"><span class="bIcon">💬</span>Discussions</div>
+      <div class="bItem"><span class="bIcon">🔔</span>Notifications <span class="badge">9+</span></div>
+      <div class="bItem"><span class="bIcon">•••</span>More</div>
+    </div>
   </div>
 
   <script>
-    // DATA (Absences tab = your latest screenshot set)
+    // ===== DATA (from your screenshots) =====
     const absencesData = [
-      { title:"TOTAL", delay:3, disrespect:6, respect:44, icon:"📖", isTotal:true },
-
-      { title:"Български език и литература", delay:0, disrespect:0, respect:3, icon:"📖" },
-      { title:"Английски език", delay:0, disrespect:0, respect:1, icon:"📖" },
-      { title:"Руски език", delay:0, disrespect:0, respect:2, icon:"📖" },
-      { title:"Математика", delay:0, disrespect:0, respect:3, icon:"📖" },
-      { title:"Гражданско образование", delay:2, disrespect:1, respect:0, icon:"📖" },
-      { title:"Физическо възпитание и спорт", delay:1, disrespect:0, respect:4, icon:"📖" },
-
-      // extra modules from your scroll screenshots:
-      { title:"МОДУЛ 3 - Човек и общество (IUCH - PP (req module)) (История и цивилизации)", delay:0, disrespect:0, respect:1, icon:"📖" },
-      { title:"Държави, общества и култури от Античността до Новото време (IUCH - PP (selectable module)) (История и цивилизации)", delay:0, disrespect:0, respect:0, icon:"📖" },
-      { title:"Спортни дейности (волейбол) (...)", delay:0, disrespect:3, respect:2, icon:"📖" },
-      { title:"Безопасност на движението (...)", delay:0, disrespect:0, respect:0, icon:"📖" },
-      { title:"Час на класа (...)", delay:0, disrespect:0, respect:1, icon:"📖" },
-
-      { title:"Руски фолклор и традиции (IUCH - PP (selectable module)) (Руски език)", delay:0, disrespect:1, respect:4, icon:"📖" },
-      { title:"История и цивилизации (IUCH - PP)", delay:0, disrespect:0, respect:0, icon:"📖" },
-      { title:"МОДУЛ 1 - Власт и институции (IUCH - PP (req module)) (История и цивилизации)", delay:0, disrespect:0, respect:2, icon:"📖" },
-      { title:"МОДУЛ 2 - Култура и духовност (IUCH - PP (req module)) (История и цивилизации)", delay:0, disrespect:0, respect:1, icon:"📖" },
-
-      { title:"МОДУЛ 4 - Култура и междукултурно общуване (IUCH - PP (req module)) (Английски език)", delay:0, disrespect:0, respect:2, icon:"📖" },
-      { title:"Английски език чрез културно-творческо интегрирано обучение (IUCH - PP (selectable module)) (Английски език)", delay:0, disrespect:0, respect:4, icon:"📖" },
-      { title:"Руски език (IUCH - PP)", delay:0, disrespect:0, respect:0, icon:"📖" },
-      { title:"МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Руски език)", delay:0, disrespect:1, respect:5, icon:"📖" },
-      { title:"МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Руски език)", delay:0, disrespect:0, respect:5, icon:"📖" },
-
-      { title:"Английски език (IUCH - PP)", delay:0, disrespect:0, respect:0, icon:"📖" },
-      { title:"МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)", delay:0, disrespect:0, respect:0, icon:"📖" },
-      { title:"МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Английски език)", delay:0, disrespect:0, respect:0, icon:"📖" },
-      { title:"МОДУЛ 3 - Езикът чрез литературата (IUCH - PP (req module)) (Английски език)", delay:0, disrespect:0, respect:1, icon:"📖" },
+      {
+        title: "TOTAL",
+        icon: "📖",
+        metrics: [
+          { label: "Delay", value: 3, color: "yellow" },
+          { label: "Disrespect.", value: 6, color: "red" },
+          { label: "Respect.", value: 44, color: "green" },
+        ],
+      },
+      {
+        title: "Български език и литература",
+        icon: "📖",
+        metrics: [
+          { label: "Delay", value: 0, color: "gray" },
+          { label: "Disrespect.", value: 0, color: "gray" },
+          { label: "Respect.", value: 3, color: "green" },
+        ],
+      },
+      {
+        title: "Английски език",
+        icon: "📖",
+        metrics: [
+          { label: "Delay", value: 0, color: "gray" },
+          { label: "Disrespect.", value: 0, color: "gray" },
+          { label: "Respect.", value: 1, color: "green" },
+        ],
+      },
+      {
+        title: "Руски език",
+        icon: "📖",
+        metrics: [
+          { label: "Delay", value: 0, color: "gray" },
+          { label: "Disrespect.", value: 0, color: "gray" },
+          { label: "Respect.", value: 2, color: "green" },
+        ],
+      },
+      {
+        title: "Математика",
+        icon: "📖",
+        metrics: [
+          { label: "Delay", value: 0, color: "gray" },
+          { label: "Disrespect.", value: 0, color: "gray" },
+          { label: "Respect.", value: 3, color: "green" },
+        ],
+      },
+      {
+        title: "Гражданско образование",
+        icon: "📖",
+        metrics: [
+          { label: "Delay", value: 2, color: "yellow" },
+          { label: "Disrespect.", value: 1, color: "red" },
+          { label: "Respect.", value: 0, color: "gray" },
+        ],
+      },
+      {
+        title: "Физическо възпитание и спорт",
+        icon: "📖",
+        metrics: [
+          { label: "Delay", value: 1, color: "yellow" },
+          { label: "Disrespect.", value: 0, color: "gray" },
+          { label: "Respect.", value: 4, color: "green" },
+        ],
+      },
+      // You showed more items above (history modules etc). Add them here the same way.
     ];
 
-    // RATINGS tab = exactly like your screenshots: same subjects + circles + "No ratings"
     const ratingsData = [
-      { title:"Български език и литература", icon:"📖", grades:[{v:3,c:"orange"},{v:5,c:"blue"}] },
-      { title:"Английски език", icon:"📖", grades:[{v:5,c:"blue"},{v:6,c:"green"},{v:6,c:"green"}] },
-      { title:"Руски език", icon:"📖", grades:[{v:5,c:"blue"},{v:3,c:"orange"}] },
-      { title:"Математика", icon:"📖", grades:[{v:2,c:"red"},{v:6,c:"green"},{v:5,c:"blue"}] },
-      { title:"Гражданско образование", icon:"📖", grades:[{v:3,c:"orange"},{v:2,c:"red"},{v:3,c:"orange"}] },
-      { title:"Физическо възпитание и спорт", icon:"📖", grades:[{v:6,c:"green"}] },
-
-      { title:"Английски език (IUCH - PP)", icon:"📖", noRatings:true },
-      { title:"МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)", icon:"📖", grades:[{v:6,c:"green"},{v:6,c:"green"}] },
-
-      { title:"МОДУЛ 3 - Човек и общество (IUCH - PP (req module)) (История и цивилизации)", icon:"📖", grades:[{v:5,c:"blue"}] },
-      { title:"Държави, общества и култури от Античността до Новото време (IUCH - PP (selectable module)) (История и цивилизации)", icon:"📖", grades:[{v:6,c:"green"},{v:6,c:"green"}] },
-      { title:"Български език и литература (IUCH - RP/UP-A)", icon:"📖", grades:[{v:2,c:"red"}] },
-
-      { title:"Спортни дейности (волейбол) (...)", icon:"📖", noRatings:true },
-      { title:"Безопасност на движението (...)", icon:"📖", noRatings:true },
-      { title:"Час на класа (...)", icon:"📖", noRatings:true },
-
-      { title:"МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Руски език)", icon:"📖", grades:[{v:5,c:"blue"}] },
-      { title:"Руски фолклор и традиции (IUCH - PP (selectable module)) (Руски език)", icon:"📖", grades:[{v:6,c:"green"},{v:6,c:"green"}] },
-      { title:"История и цивилизации (IUCH - PP)", icon:"📖", noRatings:true },
-
-      { title:"МОДУЛ 1 - Власт и институции (IUCH - PP (req module)) (История и цивилизации)", icon:"📖", grades:[{v:5,c:"blue"},{v:6,c:"green"},{v:6,c:"green"}] },
-      { title:"МОДУЛ 2 - Култура и духовност (IUCH - PP (req module)) (История и цивилизации)", icon:"📖", grades:[{v:5,c:"blue"}] },
-
-      { title:"МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Английски език)", icon:"📖", grades:[{v:5,c:"blue"}] },
-      { title:"МОДУЛ 3 - Езикът чрез литературата (IUCH - PP (req module)) (Английски език)", icon:"📖", grades:[{v:6,c:"green"}] },
-      { title:"МОДУЛ 4 - Култура и междукултурно общуване (IUCH - PP (req module)) (Английски език)", icon:"📖", grades:[{v:4,c:"orange"}] },
-
-      { title:"Английски език чрез културно-творческо интегрирано обучение (IUCH - PP (selectable module)) (Английски език)", icon:"📖", noRatings:true },
-      { title:"Руски език (IUCH - PP)", icon:"📖", noRatings:true },
-      { title:"МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Руски език)", icon:"📖", grades:[{v:6,c:"green"},{v:2,c:"red"},{v:5,c:"blue"}] },
+      { title: "Български език и литература", grades: [{v:3,c:"red"},{v:5,c:"blue"}] },
+      { title: "Английски език", grades: [{v:5,c:"blue"},{v:6,c:"green"},{v:6,c:"green"}] },
+      { title: "Руски език", grades: [{v:5,c:"blue"},{v:3,c:"red"}] },
+      { title: "Математика", grades: [{v:2,c:"red"},{v:6,c:"green"},{v:5,c:"blue"}] },
+      { title: "Гражданско образование", grades: [{v:3,c:"red"},{v:2,c:"red"},{v:3,c:"red"}] },
+      { title: "Физическо възпитание и спорт", grades: [{v:6,c:"green"}] },
+      { title: "Английски език (IUCH - PP)", grades: null }, // "No ratings"
+      { title: "МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)", grades: [{v:6,c:"green"},{v:6,c:"green"}] },
+      // Add all the extra modules you screenshotted the same way.
     ];
 
-    function dotClassForAbsences(kind, value){
-      if(value === 0) return "gray";
-      if(kind === "delay") return "yellow";
-      if(kind === "disrespect") return "red";
-      return "green";
+    // ===== RENDERERS =====
+    function metricsRowHTML(metrics){
+      // 6-column grid: label, circle, label, circle, label, circle
+      return `
+        <div class="metrics">
+          <span class="mLabel">${metrics[0].label}</span>
+          <span class="dot ${metrics[0].color}">${metrics[0].value}</span>
+
+          <span class="mLabel">${metrics[1].label}</span>
+          <span class="dot ${metrics[1].color}">${metrics[1].value}</span>
+
+          <span class="mLabel">${metrics[2].label}</span>
+          <span class="dot ${metrics[2].color}">${metrics[2].value}</span>
+        </div>
+      `;
     }
 
     function renderAbsences(){
-      const ul = document.getElementById("absencesList");
-      ul.innerHTML = "";
-
-      absencesData.forEach(item=>{
-        const li = document.createElement("li");
-        li.className = "row";
-
-        const title = document.createElement("div");
-        title.className = "row-title";
-        title.innerHTML = `
-          <div class="icon">${item.icon || "📖"}</div>
-          <div class="t">${item.title}</div>
-        `;
-
-        const metrics = document.createElement("div");
-        metrics.className = "metrics";
-        metrics.innerHTML = `
-          <div class="metric">
-            <div class="name">Delay</div>
-            <div class="dot ${dotClassForAbsences("delay", item.delay)}">${item.delay}</div>
+      const root = document.getElementById("absencesList");
+      root.innerHTML = absencesData.map(d => `
+        <div class="item">
+          <div class="itemTop">
+            <div class="book">${d.icon}</div>
+            <div class="name">${d.title}</div>
           </div>
-          <div class="metric">
-            <div class="name">Disrespect.</div>
-            <div class="dot ${dotClassForAbsences("disrespect", item.disrespect)}">${item.disrespect}</div>
-          </div>
-          <div class="metric">
-            <div class="name">Respect.</div>
-            <div class="dot ${dotClassForAbsences("respect", item.respect)}">${item.respect}</div>
-          </div>
-        `;
-
-        li.appendChild(title);
-        li.appendChild(metrics);
-        ul.appendChild(li);
-      });
+          ${metricsRowHTML(d.metrics)}
+        </div>
+      `).join("");
     }
 
     function renderRatings(){
-      const ul = document.getElementById("ratingsList");
-      ul.innerHTML = "";
-
-      ratingsData.forEach(item=>{
-        const li = document.createElement("li");
-        li.className = "row";
-
-        const title = document.createElement("div");
-        title.className = "row-title";
-        title.innerHTML = `
-          <div class="icon">${item.icon || "📖"}</div>
-          <div class="t">${item.title}</div>
+      const root = document.getElementById("ratingsList");
+      root.innerHTML = ratingsData.map(d => {
+        const grades = d.grades;
+        return `
+          <div class="item">
+            <div class="itemTop">
+              <div class="book">📖</div>
+              <div class="name small">${d.title}</div>
+            </div>
+            ${
+              !grades
+                ? `<div class="noRatings">No ratings</div>`
+                : `<div class="gradesRow">
+                    ${grades.map(g => `<span class="gdot ${g.c}">${g.v}</span>`).join("")}
+                   </div>`
+            }
+          </div>
         `;
+      }).join("");
+    }
 
-        li.appendChild(title);
-
-        if(item.noRatings){
-          const nr = document.createElement("div");
-          nr.className = "noratings";
-          nr.textContent = "No ratings";
-          li.appendChild(nr);
-        } else {
-          const grades = document.createElement("div");
-          grades.className = "grades";
-          grades.innerHTML = (item.grades || []).map(g=>`<div class="grade ${g.c}">${g.v}</div>`).join("");
-          li.appendChild(grades);
-        }
-
-        ul.appendChild(li);
+    // ===== TABS =====
+    function setActive(view){
+      document.querySelectorAll(".tab").forEach(t => {
+        t.classList.toggle("active", t.dataset.view === view);
       });
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.getElementById("view-" + view).classList.add("active");
     }
 
-    // Top tab navigation
-    function setActivePage(pageId){
-      document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-      document.getElementById(pageId).classList.add("active");
-
-      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-      document.querySelector(`.tab[data-page="${pageId}"]`).classList.add("active");
-    }
-
-    document.getElementById("topTabs").addEventListener("click", (e)=>{
+    document.getElementById("tabs").addEventListener("click", (e) => {
       const tab = e.target.closest(".tab");
       if(!tab) return;
-      setActivePage(tab.dataset.page);
+      setActive(tab.dataset.view);
     });
 
-    // Init
+    // INIT
     renderAbsences();
     renderRatings();
   </script>

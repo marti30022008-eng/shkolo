@@ -622,6 +622,7 @@
         </div>
       `;
     }).join("");
+    
 
     body.innerHTML = rows || `<div class="row" style="border-bottom:none;color:#777;font-weight:600;">No grades</div>`;
 
@@ -1916,6 +1917,14 @@
     const $ = (sel, root=document) => root.querySelector(sel);
 const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
+// Make subject rows open the correct subject
+document.querySelectorAll(".gradeRow").forEach(row => {
+  row.addEventListener("click", (e) => {
+    const subject = e.currentTarget.dataset.subject; // <-- IMPORTANT
+    openGradesSubject(subject);
+  });
+});
+    
 /* ✅ Mark all as read */
 const markAllReadBtn = document.getElementById("markAllRead");
 if (markAllReadBtn) {

@@ -27,9 +27,11 @@
       --text:#111;
       --muted:#8b8b8b;
 
-      --green:#9dbb2e;   /* closer to screenshot "praise" green */
-      --orange:#f07f63;  /* closer to screenshot "remarks" orange */
+      --green:#9dbb2e;   /* praise/green */
+      --orange:#f07f63;  /* remarks/orange */
       --yellow:#f1c40f;
+      --gradeBlue:#2d8be0;
+      --gradeRed:#e65b52;
 
       --tabInactive: rgba(255,255,255,.55);
       --tabActive: rgba(255,255,255,.95);
@@ -39,7 +41,6 @@
 
       --padX: 16px;
 
-      /* 1:1-ish sizing like your screenshots */
       --topTitle: 20px;
       --topClass: 18px;
 
@@ -111,7 +112,6 @@
       opacity:.98;
     }
 
-    /* Notebook icon like screenshot */
     .noteIco{
       width:22px; height:22px;
       border:2px solid rgba(255,255,255,.8);
@@ -209,7 +209,6 @@
       gap:10px;
     }
 
-    /* book icon (simple, consistent) */
     .book{
       font-size:20px;
       line-height:20px;
@@ -226,7 +225,6 @@
       letter-spacing:-.2px;
     }
 
-    /* Delay/Disrespect/Respect line */
     .rowSub{
       margin-top:10px;
       display:flex;
@@ -251,12 +249,14 @@
       font-size:15px;
       font-weight:700;
       color:#4a4a4a;
-      background:#e2e6ec; /* grey circles like screenshot */
+      background:#e2e6ec; /* grey circles */
     }
 
     .bGreen{ background: var(--green); color:#fff; }
     .bOrange{ background: var(--orange); color:#fff; }
     .bYellow{ background: var(--yellow); color:#222; }
+    .bBlue{ background: var(--gradeBlue); color:#fff; }
+    .bRed{ background: var(--gradeRed); color:#fff; }
 
     .hidden{ display:none; }
 
@@ -341,6 +341,7 @@
         </div>
 
         <div class="list">
+          <!-- TOTAL -->
           <div class="row">
             <div class="rowTop">
               <div class="book">📖</div>
@@ -355,6 +356,7 @@
             </div>
           </div>
 
+          <!-- Base subjects -->
           <div class="row">
             <div class="rowTop">
               <div class="book">📖</div>
@@ -397,6 +399,318 @@
             </div>
           </div>
 
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Математика</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Гражданско образование</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge bYellow">2</span>
+                  <span class="label">Disrespect.</span> <span class="badge bOrange">1</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Физическо възпитание и спорт</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge bYellow">1</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- English IUCH -->
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Английски език (IUCH - PP)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 3 - Езикът чрез литературата (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 4 - Култура и междукултурно общуване (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Английски език чрез културно–творческо интегрирано обучение (IUCH - PP (selectable module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Russian IUCH -->
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Руски език (IUCH - PP)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Руски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge bOrange">1</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Руски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Руски фолклор и традиции (IUCH - PP (selectable module)) (Руски език)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge bOrange">1</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- History IUCH -->
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">История и цивилизации (IUCH - PP)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 1 - Власт и институции (IUCH - PP (req module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 2 - Култура и духовност (IUCH - PP (req module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 3 - Човек и общество (IUCH - PP (req module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Държави, общества и култури от Античността до Новото време (IUCH - PP (selectable module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other -->
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Български език и литература (IUCH - RP/UP-A)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Спортни дейности (волейбол) (...)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge bOrange">3</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Безопасност на движението (...)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="border-bottom:none;">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Час на класа (...)</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -415,7 +729,7 @@
                 <div class="rowTitle">Български език и литература</div>
                 <div class="rowSub">
                   <span class="badge bOrange">3</span>
-                  <span class="badge" style="background:#2d8be0;color:#fff;">5</span>
+                  <span class="badge bBlue">5</span>
                 </div>
               </div>
             </div>
@@ -427,13 +741,302 @@
               <div style="flex:1">
                 <div class="rowTitle">Английски език</div>
                 <div class="rowSub">
-                  <span class="badge" style="background:#2d8be0;color:#fff;">5</span>
+                  <span class="badge bBlue">5</span>
                   <span class="badge bGreen">6</span>
                   <span class="badge bGreen">6</span>
                 </div>
               </div>
             </div>
           </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Руски език</div>
+                <div class="rowSub">
+                  <span class="badge bBlue">5</span>
+                  <span class="badge bOrange">3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Математика</div>
+                <div class="rowSub">
+                  <span class="badge bRed">2</span>
+                  <span class="badge bGreen">6</span>
+                  <span class="badge bBlue">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Гражданско образование</div>
+                <div class="rowSub">
+                  <span class="badge bOrange">3</span>
+                  <span class="badge bRed">2</span>
+                  <span class="badge bOrange">3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Физическо възпитание и спорт</div>
+                <div class="rowSub">
+                  <span class="badge bGreen">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Английски език (IUCH - PP)</div>
+                <div class="rowSub">
+                  <span class="label">No ratings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="badge bGreen">6</span>
+                  <span class="badge bGreen">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="badge bBlue">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 3 - Езикът чрез литературата (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="badge bGreen">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 4 - Култура и междукултурно общуване (IUCH - PP (req module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="badge bYellow">4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Английски език чрез културно–творческо интегрирано обучение (IUCH - PP (selectable module)) (Английски език)</div>
+                <div class="rowSub">
+                  <span class="label">No ratings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Руски език (IUCH - PP)</div>
+                <div class="rowSub">
+                  <span class="label">No ratings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Руски език)</div>
+                <div class="rowSub">
+                  <span class="badge bGreen">6</span>
+                  <span class="badge bRed">2</span>
+                  <span class="badge bBlue">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 2 - Писмено общуване (IUCH - PP (req module)) (Руски език)</div>
+                <div class="rowSub">
+                  <span class="badge bBlue">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Руски фолклор и традиции (IUCH - PP (selectable module)) (Руски език)</div>
+                <div class="rowSub">
+                  <span class="badge bGreen">6</span>
+                  <span class="badge bGreen">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">История и цивилизации (IUCH - PP)</div>
+                <div class="rowSub">
+                  <span class="label">No ratings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 1 - Власт и институции (IUCH - PP (req module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="badge bBlue">5</span>
+                  <span class="badge bGreen">6</span>
+                  <span class="badge bGreen">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 2 - Култура и духовност (IUCH - PP (req module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="badge bBlue">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">МОДУЛ 3 - Човек и общество (IUCH - PP (req module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="badge bBlue">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Държави, общества и култури от Античността до Новото време (IUCH - PP (selectable module)) (История и цивилизации)</div>
+                <div class="rowSub">
+                  <span class="badge bGreen">6</span>
+                  <span class="badge bGreen">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Български език и литература (IUCH - RP/UP-A)</div>
+                <div class="rowSub">
+                  <span class="badge bRed">2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Спортни дейности (волейбол) (...)</div>
+                <div class="rowSub">
+                  <span class="label">No ratings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Безопасност на движението (...)</div>
+                <div class="rowSub">
+                  <span class="label">No ratings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="border-bottom:none;">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Час на класа (...)</div>
+                <div class="rowSub">
+                  <span class="label">No ratings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -445,7 +1048,6 @@
         </div>
 
         <div class="list">
-          <!-- This matches the “Praise / Remarks 0 0” feel from your screenshot -->
           <div class="row">
             <div class="rowTop">
               <div class="book">📖</div>
@@ -485,7 +1087,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row" style="border-bottom:none;">
             <div class="rowTop">
               <div class="book">📖</div>
               <div style="flex:1">
@@ -550,10 +1152,8 @@
       $("#view-homework").classList.toggle("hidden", tab !== "homework");
     }
 
-    // Top tabs
     $$("#topTabs .topTab").forEach(t => t.addEventListener("click", () => setTopTab(t.dataset.tab)));
 
-    // Perfect docking: measure real bars
     function measureBars(){
       const top = $("#topBar");
       const bottom = $("#bottomBar");
@@ -562,10 +1162,10 @@
       document.documentElement.style.setProperty("--topH", topH + "px");
       document.documentElement.style.setProperty("--bottomH", bottomH + "px");
     }
+
     window.addEventListener("load", () => {
       measureBars();
-      setTopTab("reviews"); // default like your screenshot
-      // service worker
+      setTopTab("reviews");
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("./sw.js").catch(()=>{});
       }

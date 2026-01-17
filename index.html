@@ -510,6 +510,153 @@
     <!-- MAIN CONTENT -->
     <main class="content" id="content">
 
+<!-- ✅ 1) ADD THIS HTML: place it INSIDE <main class="content" id="content">,
+     ideally RIGHT AFTER your existing <section id="view-ratings" ...> -->
+<section id="screen-grade-detail" class="screen hidden">
+  <div class="gradeTop">
+    <div class="gradeBack" id="gradeBack">‹</div>
+    <div class="gradeHead">
+      <div class="gradeStudent">Мартин Стоилов 11а</div>
+      <div class="gradeSubject" id="gradeSubjectTitle">Английски език</div>
+    </div>
+    <div style="width:24px;"></div>
+  </div>
+
+  <div class="gradeTabs">
+    <div class="gradeTab">ANNUAL EVALUATION</div>
+    <div class="gradeTab">SECOND TERM</div>
+    <div class="gradeTab">FIRST TERM</div>
+  </div>
+
+  <div class="gradeBody" id="gradeBody"></div>
+</section>
+
+<style>
+  /* ✅ 2) ADD THIS CSS: paste at the END of your existing <style> */
+  .gradeTop{
+    position:sticky; top:0; z-index:10;
+    background:var(--blue); color:#fff;
+    padding-top: calc(env(safe-area-inset-top) + 10px);
+    padding-left: var(--padX);
+    padding-right: var(--padX);
+    padding-bottom: 10px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .gradeBack{ font-size:34px; line-height:34px; opacity:.95; user-select:none; }
+  .gradeHead{ flex:1; min-width:0; }
+  .gradeStudent{ font-size:18px; font-weight:700; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gradeSubject{ font-size:14px; opacity:.9; margin-top:2px; display:flex; gap:8px; align-items:center; }
+
+  .gradeTabs{
+    border-top:1px solid rgba(0,0,0,.08);
+    background:#fff;
+  }
+  .gradeTab{
+    padding: 14px var(--padX);
+    color: var(--blue);
+    font-weight:700;
+    border-bottom: 10px solid #f1f1f1;
+    letter-spacing:.2px;
+  }
+
+  .gradeBody{ background:#fff; }
+  .gradeItem{
+    display:flex; align-items:center; gap:12px;
+    padding: 14px var(--padX);
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+  .gCircle{
+    width:36px; height:36px; border-radius:999px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; color:#fff; flex:0 0 auto;
+  }
+  .gText{ flex:1; min-width:0; }
+  .gTitle{ font-size:18px; font-weight:700; color:#111; line-height:1.15; }
+  .gDate{ margin-top:4px; font-size:14px; color:#777; display:flex; align-items:center; gap:6px; }
+  .gChev{ font-size:18px; color:#888; }
+</style>
+
+<script>
+  /* ✅ 3) ADD THIS JS: paste inside your existing <script>,
+        anywhere AFTER your $ and $$ helpers */
+
+  // --- demo data (replace/extend later) ---
+  const gradeData = {
+    "Английски език": [
+      { grade: 6, title: "Класна работа", date: "12.01.2026" },
+      { grade: 6, title: "Активно участие", date: "16.10.2025" },
+      { grade: 5, title: "Домашна работа", date: "15.10.2025" }
+    ],
+    "Български език и литература": [
+      { grade: 5, title: "Писмено изпитване", date: "25.11.2025" },
+      { grade: 3, title: "Входно равнище", date: "16.10.2025" }
+    ]
+  };
+
+  function gradeColorClass(g){
+    // match your app vibe: 6 green, 5 blue, 4 yellow, 3 orange, 2 red
+    if (g >= 6) return "bGreen";
+    if (g === 5) return "bBlue";
+    if (g === 4) return "bYellow";
+    if (g === 3) return "bOrange";
+    return "bRed";
+  }
+
+  function openGradeDetail(subject){
+    // set header
+    document.getElementById("gradeSubjectTitle").textContent = subject;
+
+    // render list
+    const body = document.getElementById("gradeBody");
+    const rows = (gradeData[subject] || []).map(item => {
+      const c = gradeColorClass(item.grade);
+      return `
+        <div class="gradeItem">
+          <div class="gCircle ${c}">${item.grade}</div>
+          <div class="gText">
+            <div class="gTitle">${item.title}</div>
+            <div class="gDate">📅 ${item.date}</div>
+          </div>
+          <div class="gChev">▾</div>
+        </div>
+      `;
+    }).join("");
+
+    body.innerHTML = rows || `<div class="row" style="border-bottom:none;color:#777;font-weight:600;">No grades</div>`;
+
+    // switch screens (keep your bottom nav)
+    setBottomScreen("diary");               // stay under Diary
+    ["absences","ratings","reviews","timetable","homework"].forEach(t => {
+      const el = document.getElementById("view-" + t);
+      if(el) el.classList.add("hidden");
+    });
+    document.getElementById("screen-grade-detail").classList.remove("hidden");
+  }
+
+  function closeGradeDetail(){
+    document.getElementById("screen-grade-detail").classList.add("hidden");
+    // go back to Ratings view
+    setTopTab("ratings");
+  }
+
+  // back button
+  document.getElementById("gradeBack")?.addEventListener("click", closeGradeDetail);
+
+  // ✅ make your Ratings subject rows clickable:
+  // add this ONE attribute to any Ratings row you want clickable:
+  // <div class="row gradeRow" data-subject="Английски език"> ... </div>
+  function wireGradeRows(){
+    document.querySelectorAll("#view-ratings .row.gradeRow").forEach(row => {
+      row.addEventListener("click", () => openGradeDetail(row.dataset.subject));
+      row.style.cursor = "pointer";
+    });
+  }
+
+  // call after load (you already have window load)
+  window.addEventListener("load", wireGradeRows);
+</script>
+      
       <!-- ===================== DIARY VIEWS ===================== -->
 
       <!-- ABSENCES (Notes) -->
@@ -900,7 +1047,7 @@
           <div class="chev"></div>
         </div>
 
-        <div class="list">
+        <div class="row gradeRow" data-subject="Български език и литература">
           <div class="row">
             <div class="rowTop">
               <div class="book">📖</div>
@@ -914,7 +1061,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row gradeRow" data-subject="Английски език">
             <div class="rowTop">
               <div class="book">📖</div>
               <div style="flex:1">

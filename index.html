@@ -2,812 +2,575 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Diary UI Replica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>Shkolo</title>
+
+  <!-- iOS / PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#1b87c9" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+
+  <!-- Icons (JPG) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="180x180.jpg" />
+  <link rel="icon" type="image/jpeg" sizes="192x192" href="192x192.jpg" />
+  <link rel="icon" type="image/jpeg" sizes="512x512" href="512x512.jpg" />
+
   <style>
     :root{
-      --blue:#1f86b7;
-      --blue-dark:#1779a7;
+      --blue:#1b87c9;
+      --line:#e9e9e9;
       --bg:#ffffff;
-      --muted:#8f8f8f;
+      --section:#f1f1f1;
       --text:#111;
-      --line:#e7e7e7;
+      --muted:#8b8b8b;
 
-      /* Badge colors from screenshots-ish */
-      --badge-yellow:#f1b51c;
-      --badge-red:#e65b52;
-      --badge-green:#2ea865;
-      --badge-gray:#d9d9d9;
+      --green:#9dbb2e;   /* closer to screenshot "praise" green */
+      --orange:#f07f63;  /* closer to screenshot "remarks" orange */
+      --yellow:#f1c40f;
 
-      /* Layout tuning knobs (the important part) */
-      --header-h:124px;
-      --tabs-h:58px;
-      --notesbar-h:62px;
+      --tabInactive: rgba(255,255,255,.55);
+      --tabActive: rgba(255,255,255,.95);
 
-      --content-max: 460px; /* keeps iPhone-like readable width on desktop */
-      --row-pad-y: 18px;
-      --row-pad-x: 18px;
+      --topH: 0px;       /* filled by JS */
+      --bottomH: 0px;    /* filled by JS */
 
-      --title-size: 38px; /* Notes */
-      --section-title-size: 34px; /* TOTAL label size in Absences view */
-      --item-title-size: 40px; /* Subject big bold */
-      --item-title-size-small: 28px; /* Subject smaller in Ratings view */
-      --meta-size: 24px;
+      --padX: 16px;
 
-      --badge-size: 56px; /* circles in absences */
-      --grade-size: 54px; /* circles in ratings */
+      /* 1:1-ish sizing like your screenshots */
+      --topTitle: 20px;
+      --topClass: 18px;
 
-      --icon-size: 34px;
-      --divider-gap: 14px;
+      --tabIcon: 20px;
+      --tabText: 13px;
+
+      --sectionTitle: 22px;
+
+      --rowTitle: 20px;
+      --rowMeta: 16px;
+      --badge: 28px;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-text-size-adjust:100%;
+      overscroll-behavior:none;
     }
 
-    /* App frame */
-    .app{
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      min-height:100vh;
-      background:#fff;
-    }
+    .app{ min-height:100vh; background:var(--bg); }
 
-    /* Top blue header */
+    /* ===== Top bar ===== */
     .top{
-      background: var(--blue);
+      position:fixed; left:0; right:0; top:0;
+      z-index:50;
+      background:var(--blue);
       color:#fff;
-      padding: 10px 14px 0 14px;
+      padding-top: calc(env(safe-area-inset-top) + 10px);
+      padding-left: var(--padX);
+      padding-right: var(--padX);
+      box-shadow: 0 1px 0 rgba(0,0,0,.12);
     }
-    .status{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      height: 26px;
-      font-weight:700;
-      letter-spacing:0.3px;
-    }
-    .status .time{font-size:22px}
-    .status .icons{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-size:14px;
-      opacity:0.95;
-    }
-    .bar{
+
+    .topRow{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding: 8px 4px 6px 4px;
+      padding: 6px 0 10px;
     }
-    .left-dd{
+
+    .classPick{
       display:flex;
       align-items:center;
-      gap:8px;
-      font-size:34px;
-      font-weight:800;
-      letter-spacing:0.2px;
+      gap:6px;
+      font-size:var(--topClass);
+      font-weight:500;
+      opacity:.95;
+      min-width:70px;
     }
     .caret{
-      width: 0;
-      height: 0;
-      border-left: 7px solid transparent;
-      border-right: 7px solid transparent;
-      border-top: 9px solid rgba(255,255,255,0.95);
-      transform: translateY(4px);
-      opacity:0.95;
+      width:0;height:0;
+      border-left:5px solid transparent;
+      border-right:5px solid transparent;
+      border-top:6px solid rgba(255,255,255,.9);
+      margin-top:3px;
     }
-    .center-title{
+
+    .title{
       display:flex;
       align-items:center;
       gap:10px;
-      font-size:44px;
-      font-weight:800;
-      letter-spacing:0.2px;
-      margin-right: 6px;
-    }
-    .logo{
-      width:44px;height:44px;border:3px solid rgba(255,255,255,0.65);
-      border-radius:8px; position:relative;
-    }
-    .logo:before{
-      content:"";
-      position:absolute; left:50%; top:50%;
-      width: 4px; height: 26px; background: rgba(255,255,255,0.85);
-      transform: translate(-50%,-50%);
-      border-radius:2px;
+      font-size:var(--topTitle);
+      font-weight:500;
+      opacity:.98;
     }
 
-    /* Top tabs (Absences, Ratings...) */
-    .tabs{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      gap:10px;
-      padding: 6px 10px 0 10px;
-      height: var(--tabs-h);
-    }
-    .tab{
-      flex:1;
-      text-align:center;
-      padding: 6px 0 10px 0;
-      color: rgba(255,255,255,0.75);
-      font-weight:700;
-      font-size:20px;
-      user-select:none;
-      cursor:pointer;
+    /* Notebook icon like screenshot */
+    .noteIco{
+      width:22px; height:22px;
+      border:2px solid rgba(255,255,255,.8);
+      border-radius:4px;
       position:relative;
+      opacity:.95;
     }
-    .tab .ico{
-      display:block;
-      height: 22px;
-      margin: 0 auto 6px auto;
-      opacity:0.95;
-    }
-    .tab.active{
-      color:#fff;
-    }
-    .tab.active:after{
+    .noteIco:before{
       content:"";
       position:absolute;
-      left: 18%;
-      right: 18%;
-      bottom: 0;
-      height: 4px;
-      background: #fff;
-      border-radius: 4px;
+      left:5px; top:3px; bottom:3px;
+      width:2px;
+      background:rgba(255,255,255,.8);
     }
 
-    /* Notes / Term bar */
-    .notesbar{
+    /* ===== Top tabs ===== */
+    .topTabs{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      padding-bottom: 6px;
+    }
+    .topTab{
+      flex:1;
+      text-align:center;
+      color:var(--tabInactive);
+      padding: 6px 0 2px;
+      font-size:var(--tabText);
+      font-weight:500;
+      user-select:none;
+      position:relative;
+    }
+    .topTab .ico{
+      display:block;
+      font-size:var(--tabIcon);
+      line-height:var(--tabIcon);
+      margin-bottom:4px;
+      opacity:.95;
+    }
+    .topTab.active{
+      color:var(--tabActive);
+      font-weight:600;
+    }
+    .topTab.active:after{
+      content:"";
+      position:absolute;
+      left:18%;
+      right:18%;
+      bottom:-6px;
+      height:4px;
+      background:#fff;
+      border-radius:4px 4px 0 0;
+    }
+
+    /* ===== Content docking ===== */
+    main.content{
+      padding-top: calc(var(--topH) + env(safe-area-inset-top));
+      padding-bottom: calc(var(--bottomH) + env(safe-area-inset-bottom));
+      background:var(--bg);
+    }
+
+    /* ===== Section header bar ===== */
+    .sectionBar{
+      background:var(--section);
+      border-bottom:1px solid var(--line);
+      padding: 14px var(--padX);
       display:flex;
       align-items:center;
       justify-content:space-between;
-      height: var(--notesbar-h);
-      padding: 0 18px;
-      border-bottom:1px solid var(--line);
-      background:#f7f7f7;
     }
-    .notesbar .label{
-      color: var(--blue-dark);
-      font-size: var(--title-size);
-      font-weight:900;
-      letter-spacing:0.2px;
-    }
-    .notesbar .right{
-      display:flex; align-items:center; gap:10px;
-      color:#8a8a8a;
-      font-weight:800;
-      font-size: 28px;
+    .sectionTitle{
+      font-size:var(--sectionTitle);
+      font-weight:600;
+      color:var(--blue);
     }
     .chev{
-      width: 10px; height: 10px;
-      border-right: 4px solid #8a8a8a;
-      border-bottom: 4px solid #8a8a8a;
-      transform: rotate(-45deg);
-      margin-top: 2px;
-    }
-    .chev.down{
-      transform: rotate(45deg);
+      width:10px;height:10px;
+      border-right:3px solid #7a7a7a;
+      border-bottom:3px solid #7a7a7a;
+      transform:rotate(45deg);
+      opacity:.9;
     }
 
-    /* Content area */
-    .content{
-      display:flex;
-      justify-content:center;
-      padding: 0;
-      flex:1;
-      background:#fff;
-    }
-    .panel{
-      width:100%;
-      max-width: var(--content-max);
-    }
+    /* ===== List rows ===== */
+    .list{ background:#fff; }
 
-    /* List rows */
     .row{
-      padding: var(--row-pad-y) var(--row-pad-x);
-      border-bottom: 1px solid var(--line);
-      background:#fff;
+      padding: 16px var(--padX);
+      border-bottom:1px solid var(--line);
     }
-    .row-title{
+
+    .rowTop{
       display:flex;
       align-items:flex-start;
-      gap: 12px;
+      gap:10px;
     }
-    .row-title .book{
-      width: var(--icon-size);
-      height: var(--icon-size);
-      margin-top: 6px;
-      flex:0 0 auto;
-      opacity:0.95;
-    }
-    .row-title h3{
-      margin: 0;
-      font-size: var(--item-title-size);
-      line-height: 1.05;
-      font-weight: 900;
-      letter-spacing: 0.2px;
-    }
-    .meta{
-      display:flex;
-      align-items:center;
-      gap: 14px;
-      margin-top: 12px;
-      padding-left: calc(var(--icon-size) + 12px);
-      flex-wrap:nowrap;
-    }
-    .meta .label{
-      color:#7f7f7f;
-      font-size: var(--meta-size);
-      font-weight:800;
-      letter-spacing:0.2px;
-    }
-    .badge{
-      width: var(--badge-size);
-      height: var(--badge-size);
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight: 900;
-      font-size: 24px;
-      color: #fff;
-      flex:0 0 auto;
-    }
-    .badge.yellow{ background: var(--badge-yellow); }
-    .badge.red{ background: var(--badge-red); }
-    .badge.green{ background: var(--badge-green); }
-    .badge.gray{ background: var(--badge-gray); color:#444; font-weight:900; }
 
-    /* Ratings view styles */
-    .row.ratings .row-title h3{
-      font-size: var(--item-title-size-small);
-      font-weight: 900;
-      line-height: 1.1;
+    /* book icon (simple, consistent) */
+    .book{
+      font-size:20px;
+      line-height:20px;
+      opacity:.9;
+      margin-top:2px;
+      width:22px;
+      text-align:center;
     }
-    .grades{
+
+    .rowTitle{
+      font-size:var(--rowTitle);
+      font-weight:700;
+      line-height:1.15;
+      letter-spacing:-.2px;
+    }
+
+    /* Delay/Disrespect/Respect line */
+    .rowSub{
+      margin-top:10px;
       display:flex;
-      gap: 12px;
-      padding-left: calc(var(--icon-size) + 12px);
-      margin-top: 12px;
       align-items:center;
+      gap:14px;
       flex-wrap:wrap;
     }
-    .grade{
-      width: var(--grade-size);
-      height: var(--grade-size);
-      border-radius: 999px;
-      display:flex;
+
+    .label{
+      font-size:var(--rowMeta);
+      color:var(--muted);
+      font-weight:500;
+    }
+
+    .badge{
+      width:var(--badge);
+      height:var(--badge);
+      border-radius:999px;
+      display:inline-flex;
       align-items:center;
       justify-content:center;
-      font-weight: 900;
-      font-size: 22px;
-      color:#fff;
-    }
-    .grade.blue{ background:#2d7fbe;}
-    .grade.green{ background:#2ea865;}
-    .grade.orange{ background:#f39b2f;}
-    .grade.red{ background:#e65b52;}
-    .no-ratings{
-      padding-left: calc(var(--icon-size) + 12px);
-      margin-top: 10px;
-      color:#9a9a9a;
-      font-size: 22px;
-      font-weight:800;
+      font-size:15px;
+      font-weight:700;
+      color:#4a4a4a;
+      background:#e2e6ec; /* grey circles like screenshot */
     }
 
-    /* Bottom tab bar (Diary, Discussions...) */
-    .bottom{
+    .bGreen{ background: var(--green); color:#fff; }
+    .bOrange{ background: var(--orange); color:#fff; }
+    .bYellow{ background: var(--yellow); color:#222; }
+
+    .hidden{ display:none; }
+
+    /* ===== Bottom nav ===== */
+    footer.bottomNav{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      z-index:50;
+      background:#fff;
       border-top:1px solid var(--line);
-      background:#f6f6f6;
-      padding: 10px 16px 16px;
-      display:flex;
-      justify-content:space-between;
-      position: sticky;
-      bottom: 0;
+      padding-bottom: env(safe-area-inset-bottom);
     }
-    .btab{
-      flex:1;
+
+    .navBar{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-around;
+      padding: 8px 8px 10px;
+    }
+
+    .navItem{
+      width:25%;
       text-align:center;
       color:#9a9a9a;
-      font-weight:800;
-      font-size:18px;
-    }
-    .btab.active{ color: var(--blue-dark); }
-    .btab .dot{
-      width: 34px; height: 34px; border-radius: 8px;
-      display:block; margin: 0 auto 6px auto;
-      background:#cfcfcf;
+      font-size:12px;
+      font-weight:500;
+      user-select:none;
       position:relative;
     }
-    .btab.active .dot{ background:#a7d2ea; }
-    .notif{
-      position:absolute;
-      right:-10px; top:-10px;
-      background:#d94a45;
-      color:#fff;
-      border-radius:999px;
-      padding:4px 8px;
-      font-size:14px;
-      font-weight:900;
+    .navItem .nIco{
+      display:block;
+      font-size:24px;
+      line-height:24px;
+      margin-bottom:4px;
+      opacity:.95;
     }
+    .navItem.active{ color:var(--blue); }
 
-    /* SVG icons */
-    .svg{display:block}
-    .hidden{display:none !important;}
-
-    /* Make it feel like iPhone scale on desktop */
-    @media (min-width: 900px){
-      body{background:#efefef}
-      .app{
-        max-width: 520px;
-        margin: 18px auto;
-        border-radius: 18px;
-        overflow:hidden;
-        box-shadow: 0 18px 40px rgba(0,0,0,0.18);
-      }
+    .navBadge{
+      position:absolute;
+      top:-2px;
+      left:56%;
+      background:#e74c3c;
+      color:#fff;
+      font-weight:700;
+      font-size:11px;
+      padding:2px 6px;
+      border-radius:999px;
+      border:2px solid #fff;
     }
   </style>
 </head>
+
 <body>
-<div class="app">
-  <div class="top">
-    <div class="status">
-      <div class="time" id="time">03:14</div>
-      <div class="icons">▮▮▮  Wi-Fi  🔋</div>
-    </div>
+  <div class="app">
 
-    <div class="bar">
-      <div class="left-dd">MC1 <span class="caret"></span></div>
-      <div class="center-title">
-        <span class="logo" aria-hidden="true"></span>
-        <span>Diary</span>
+    <!-- TOP HEADER -->
+    <header class="top" id="topBar">
+      <div class="topRow">
+        <div class="classPick">MC1 <span class="caret"></span></div>
+        <div class="title"><span class="noteIco"></span> Diary</div>
+        <div style="width:70px;"></div>
       </div>
-      <div style="width:52px"></div>
-    </div>
 
-    <div class="tabs" role="tablist" aria-label="Diary tabs">
-      <div class="tab active" data-tab="absences" role="tab" aria-selected="true">
-        <span class="ico">
-          <!-- exclamation -->
-          <svg class="svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="rgba(255,255,255,0.95)" d="M11 3h2v12h-2zM11 17h2v4h-2z"/>
-          </svg>
-        </span>
-        Absences
-      </div>
-      <div class="tab" data-tab="ratings" role="tab" aria-selected="false">
-        <span class="ico">
-          <!-- pencil -->
-          <svg class="svg" width="24" height="24" viewBox="0 0 24 
-            24" aria-hidden="true">
-            <path fill="rgba(255,255,255,0.95)" d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25zm2.92 2.33H5v-.92l9.06-9.06.92.92L5.92 19.58zM20.7 7.04a1 1 0 0 0 0-1.41l-2.33-2.33a1 1 0 0 0-1.41 0l-1.13 1.13 3.75 3.75 1.12-1.14z"/>
-          </svg>
-        </span>
-        Ratings
-      </div>
-      <div class="tab" data-tab="reviews" role="tab" aria-selected="false">
-        <span class="ico">
-          <!-- medal -->
-          <svg class="svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="rgba(255,255,255,0.95)" d="M7 2h4l1 3 1-3h4l-3 6H10L7 2zm5 8a6 6 0 1 0 .001 12.001A6 6 0 0 0 12 10zm0 2.2 1.2 2.4 2.65.38-1.92 1.87.45 2.64L12 18.25l-2.38 1.25.45-2.64-1.92-1.87 2.65-.38L12 12.2z"/>
-          </svg>
-        </span>
-        Reviews
-      </div>
-      <div class="tab" data-tab="timetable" role="tab" aria-selected="false">
-        <span class="ico">
-          <!-- clock -->
-          <svg class="svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="rgba(255,255,255,0.95)" d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zm1 11h5v-2h-4V6h-2v7z"/>
-          </svg>
-        </span>
-        Timetable
-      </div>
-      <div class="tab" data-tab="homework" role="tab" aria-selected="false">
-        <span class="ico">
-          <!-- notebook -->
-          <svg class="svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="rgba(255,255,255,0.95)" d="M6 2h12a2 2 0 0 1 2 2v18H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm2 4h10v2H8V6zm0 4h10v2H8v-2zm0 4h10v2H8v-2z"/>
-          </svg>
-        </span>
-        Homework
-      </div>
-    </div>
-  </div>
+      <nav class="topTabs" id="topTabs">
+        <div class="topTab" data-tab="absences"><span class="ico">ℹ️</span>Absences</div>
+        <div class="topTab" data-tab="ratings"><span class="ico">✏️</span>Ratings</div>
+        <div class="topTab active" data-tab="reviews"><span class="ico">🏅</span>Reviews</div>
+        <div class="topTab" data-tab="timetable"><span class="ico">🕒</span>Timetable</div>
+        <div class="topTab" data-tab="homework"><span class="ico">📓</span>Homework</div>
+      </nav>
+    </header>
 
-  <!-- Notes / First Term bar -->
-  <div class="notesbar" id="notesbar">
-    <div class="label" id="notesLabel">Notes</div>
-    <div class="right" id="notesRight">
-      <span id="termLabel" class="hidden">First Term</span>
-      <span class="chev down" id="notesChev"></span>
-    </div>
-  </div>
+    <!-- MAIN CONTENT -->
+    <main class="content" id="content">
 
-  <div class="content">
-    <div class="panel">
-
-      <!-- ABSENCES -->
-      <div id="view-absences">
-
-        <!-- TOTAL -->
-        <div class="row">
-          <div class="row-title">
-            <!-- book icon -->
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3 style="font-size:var(--section-title-size)">TOTAL</h3>
-          </div>
-
-          <div class="meta">
-            <span class="label">Delay</span>
-            <span class="badge yellow">3</span>
-
-            <span class="label">Disrespect.</span>
-            <span class="badge red">6</span>
-
-            <span class="label">Respect.</span>
-            <span class="badge green">44</span>
-          </div>
+      <!-- ABSENCES (Notes) -->
+      <section id="view-absences" class="view hidden">
+        <div class="sectionBar">
+          <div class="sectionTitle">Notes</div>
+          <div class="chev"></div>
         </div>
 
-        <!-- Bulgarian -->
-        <div class="row">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Български език и литература</h3>
+        <div class="list">
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">TOTAL</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge bYellow">3</span>
+                  <span class="label">Disrespect.</span> <span class="badge bOrange">6</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">44</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="meta">
-            <span class="label">Delay</span>
-            <span class="badge gray">0</span>
 
-            <span class="label">Disrespect.</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Respect.</span>
-            <span class="badge green">3</span>
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Български език и литература</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">3</span>
+                </div>
+              </div>
+            </div>
           </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Английски език</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Руски език</div>
+                <div class="rowSub">
+                  <span class="label">Delay</span> <span class="badge">0</span>
+                  <span class="label">Disrespect.</span> <span class="badge">0</span>
+                  <span class="label">Respect.</span> <span class="badge bGreen">2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
-
-        <!-- English -->
-        <div class="row">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Английски език</h3>
-          </div>
-          <div class="meta">
-            <span class="label">Delay</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Disrespect.</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Respect.</span>
-            <span class="badge green">1</span>
-          </div>
-        </div>
-
-        <!-- Russian -->
-        <div class="row">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Руски език</h3>
-          </div>
-          <div class="meta">
-            <span class="label">Delay</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Disrespect.</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Respect.</span>
-            <span class="badge green">2</span>
-          </div>
-        </div>
-
-        <!-- Math -->
-        <div class="row">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Математика</h3>
-          </div>
-          <div class="meta">
-            <span class="label">Delay</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Disrespect.</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Respect.</span>
-            <span class="badge green">3</span>
-          </div>
-        </div>
-
-        <!-- Civic education -->
-        <div class="row">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Гражданско образование</h3>
-          </div>
-          <div class="meta">
-            <span class="label">Delay</span>
-            <span class="badge yellow">2</span>
-
-            <span class="label">Disrespect.</span>
-            <span class="badge red">1</span>
-
-            <span class="label">Respect.</span>
-            <span class="badge gray">0</span>
-          </div>
-        </div>
-
-        <!-- PE -->
-        <div class="row">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Физическо възпитание и спорт</h3>
-          </div>
-          <div class="meta">
-            <span class="label">Delay</span>
-            <span class="badge yellow">1</span>
-
-            <span class="label">Disrespect.</span>
-            <span class="badge gray">0</span>
-
-            <span class="label">Respect.</span>
-            <span class="badge green">4</span>
-          </div>
-        </div>
-
-      </div>
+      </section>
 
       <!-- RATINGS -->
-      <div id="view-ratings" class="hidden">
-
-        <!-- Bulgarian -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Български език и литература</h3>
-          </div>
-          <div class="grades">
-            <span class="grade orange">3</span>
-            <span class="grade blue">5</span>
-          </div>
+      <section id="view-ratings" class="view hidden">
+        <div class="sectionBar">
+          <div class="sectionTitle">First Term</div>
+          <div class="chev"></div>
         </div>
 
-        <!-- English -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Английски език</h3>
+        <div class="list">
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Български език и литература</div>
+                <div class="rowSub">
+                  <span class="badge bOrange">3</span>
+                  <span class="badge" style="background:#2d8be0;color:#fff;">5</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="grades">
-            <span class="grade blue">5</span>
-            <span class="grade green">6</span>
-            <span class="grade green">6</span>
+
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Английски език</div>
+                <div class="rowSub">
+                  <span class="badge" style="background:#2d8be0;color:#fff;">5</span>
+                  <span class="badge bGreen">6</span>
+                  <span class="badge bGreen">6</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        <!-- Russian -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Руски език</h3>
-          </div>
-          <div class="grades">
-            <span class="grade blue">5</span>
-            <span class="grade orange">3</span>
-          </div>
+      <!-- REVIEWS -->
+      <section id="view-reviews" class="view">
+        <div class="sectionBar">
+          <div class="sectionTitle">TOTAL</div>
+          <div class="chev"></div>
         </div>
 
-        <!-- Math -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Математика</h3>
+        <div class="list">
+          <!-- This matches the “Praise / Remarks 0 0” feel from your screenshot -->
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">TOTAL</div>
+                <div class="rowSub">
+                  <span class="label">Praise</span> <span class="badge bGreen">7</span>
+                  <span class="label">Remarks</span> <span class="badge bOrange">9</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="grades">
-            <span class="grade red">2</span>
-            <span class="grade green">6</span>
-            <span class="grade blue">5</span>
-          </div>
-        </div>
 
-        <!-- Civic -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Гражданско образование</h3>
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Общи отзиви</div>
+                <div class="rowSub">
+                  <span class="label">Praise</span> <span class="badge">0</span>
+                  <span class="label">Remarks</span> <span class="badge">0</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="grades">
-            <span class="grade orange">3</span>
-            <span class="grade red">2</span>
-            <span class="grade orange">3</span>
-          </div>
-        </div>
 
-        <!-- PE -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Физическо възпитание и спорт</h3>
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Български език и литература</div>
+                <div class="rowSub">
+                  <span class="label">Praise</span> <span class="badge bGreen">1</span>
+                  <span class="label">Remarks</span> <span class="badge bOrange">1</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="grades">
-            <span class="grade green">6</span>
-          </div>
-        </div>
 
-        <!-- English (IUCH - PP) no ratings -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>Английски език (IUCH - PP)</h3>
+          <div class="row">
+            <div class="rowTop">
+              <div class="book">📖</div>
+              <div style="flex:1">
+                <div class="rowTitle">Английски език</div>
+                <div class="rowSub">
+                  <span class="label">Praise</span> <span class="badge">0</span>
+                  <span class="label">Remarks</span> <span class="badge bOrange">3</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="no-ratings">No ratings</div>
-        </div>
 
-        <!-- Module 1 - Speaking (English) -->
-        <div class="row ratings">
-          <div class="row-title">
-            <svg class="book" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#111" d="M4 4a2 2 0 0 1 2-2h10a3 3 0 0 1 3 3v15a2 2 0 0 1-2 2H7a3 3 0 0 0-3 3V4zm3 1h9a2 2 0 0 1 2 2v12.2A3.9 3.9 0 0 0 16 19H7a4.7 4.7 0 0 0-1 .11V5a1 1 0 0 1 1-1z"/>
-            </svg>
-            <h3>МОДУЛ 1 - Устно общуване (IUCH - PP (req module)) (Английски език)</h3>
-          </div>
-          <div class="grades">
-            <span class="grade green">6</span>
-            <span class="grade green">6</span>
-          </div>
         </div>
+      </section>
 
+      <!-- TIMETABLE -->
+      <section id="view-timetable" class="view hidden">
+        <div class="sectionBar">
+          <div class="sectionTitle">Timetable</div>
+          <div class="chev"></div>
+        </div>
+        <div class="row" style="border-bottom:none;color:#777;font-weight:500;">
+          Timetable screen (placeholder).
+        </div>
+      </section>
+
+      <!-- HOMEWORK -->
+      <section id="view-homework" class="view hidden">
+        <div class="sectionBar">
+          <div class="sectionTitle">Homework</div>
+          <div class="chev"></div>
+        </div>
+        <div class="row" style="border-bottom:none;color:#777;font-weight:500;">
+          Homework screen (placeholder).
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <footer class="bottomNav" id="bottomBar">
+      <div class="navBar">
+        <div class="navItem active"><span class="nIco">📘</span>Diary</div>
+        <div class="navItem"><span class="nIco">💬</span>Discussions</div>
+        <div class="navItem"><span class="nIco">🔔</span>Notifications <span class="navBadge">9+</span></div>
+        <div class="navItem"><span class="nIco">⋯</span>More</div>
       </div>
+    </footer>
 
-      <!-- REVIEWS (placeholder, keeps UI consistent) -->
-      <div id="view-reviews" class="hidden">
-        <div class="row">
-          <div style="padding:12px 0 6px; color:#888; font-weight:800; font-size:20px;">
-            Reviews view placeholder (same layout shell). Paste your final reviews requirements and we fill this list exactly.
-          </div>
-        </div>
-      </div>
-
-      <!-- TIMETABLE (placeholder) -->
-      <div id="view-timetable" class="hidden">
-        <div class="row">
-          <div style="padding:12px 0 6px; color:#888; font-weight:800; font-size:20px;">
-            Timetable placeholder.
-          </div>
-        </div>
-      </div>
-
-      <!-- HOMEWORK (placeholder) -->
-      <div id="view-homework" class="hidden">
-        <div class="row">
-          <div style="padding:12px 0 6px; color:#888; font-weight:800; font-size:20px;">
-            Homework placeholder.
-          </div>
-        </div>
-      </div>
-
-    </div>
   </div>
 
-  <div class="bottom" aria-label="Bottom navigation">
-    <div class="btab active">
-      <span class="dot"></span>
-      Diary
-    </div>
-    <div class="btab">
-      <span class="dot"></span>
-      Discussions
-    </div>
-    <div class="btab">
-      <span class="dot"><span class="notif">9+</span></span>
-      Notifications
-    </div>
-    <div class="btab">
-      <span class="dot"></span>
-      More
-    </div>
-  </div>
-</div>
+  <script>
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
-<script>
-  const tabs = Array.from(document.querySelectorAll(".tab"));
-  const views = {
-    absences: document.getElementById("view-absences"),
-    ratings: document.getElementById("view-ratings"),
-    reviews: document.getElementById("view-reviews"),
-    timetable: document.getElementById("view-timetable"),
-    homework: document.getElementById("view-homework")
-  };
-
-  const notesLabel = document.getElementById("notesLabel");
-  const termLabel = document.getElementById("termLabel");
-  const notesChev = document.getElementById("notesChev");
-
-  function setActive(tabName){
-    // Tabs
-    tabs.forEach(t => {
-      const is = t.dataset.tab === tabName;
-      t.classList.toggle("active", is);
-      t.setAttribute("aria-selected", is ? "true" : "false");
-    });
-
-    // Views
-    Object.entries(views).forEach(([k, el]) => {
-      el.classList.toggle("hidden", k !== tabName);
-    });
-
-    // Notes bar text (Absences shows "Notes", Ratings shows "First Term")
-    if(tabName === "ratings"){
-      notesLabel.textContent = "First Term";
-      notesLabel.style.fontSize = "36px";
-      notesLabel.style.fontWeight = "900";
-      notesLabel.style.color = getComputedStyle(document.documentElement).getPropertyValue("--blue-dark");
-      termLabel.classList.add("hidden");
-      notesChev.classList.add("down");
-    } else {
-      notesLabel.textContent = "Notes";
-      notesLabel.style.fontSize = getComputedStyle(document.documentElement).getPropertyValue("--title-size");
-      notesLabel.style.fontWeight = "900";
-      termLabel.classList.add("hidden");
-      notesChev.classList.add("down");
+    function setTopTab(tab){
+      $$("#topTabs .topTab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+      $("#view-absences").classList.toggle("hidden", tab !== "absences");
+      $("#view-ratings").classList.toggle("hidden", tab !== "ratings");
+      $("#view-reviews").classList.toggle("hidden", tab !== "reviews");
+      $("#view-timetable").classList.toggle("hidden", tab !== "timetable");
+      $("#view-homework").classList.toggle("hidden", tab !== "homework");
     }
-  }
 
-  tabs.forEach(t => {
-    t.addEventListener("click", () => setActive(t.dataset.tab));
-  });
+    // Top tabs
+    $$("#topTabs .topTab").forEach(t => t.addEventListener("click", () => setTopTab(t.dataset.tab)));
 
-  // Time display (keeps it looking alive)
-  function pad(n){ return String(n).padStart(2,"0"); }
-  function tick(){
-    const d = new Date();
-    document.getElementById("time").textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  }
-  tick();
-  setInterval(tick, 15000);
-
-  // Start on Absences (like screenshots)
-  setActive("absences");
-</script>
+    // Perfect docking: measure real bars
+    function measureBars(){
+      const top = $("#topBar");
+      const bottom = $("#bottomBar");
+      const topH = top ? top.getBoundingClientRect().height : 0;
+      const bottomH = bottom ? bottom.getBoundingClientRect().height : 0;
+      document.documentElement.style.setProperty("--topH", topH + "px");
+      document.documentElement.style.setProperty("--bottomH", bottomH + "px");
+    }
+    window.addEventListener("load", () => {
+      measureBars();
+      setTopTab("reviews"); // default like your screenshot
+      // service worker
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js").catch(()=>{});
+      }
+    });
+    window.addEventListener("resize", measureBars);
+  </script>
 </body>
 </html>

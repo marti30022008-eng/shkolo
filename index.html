@@ -1005,127 +1005,150 @@
         </div>
       </section>
 
-      <!-- RATINGS -->
-      <section id="view-ratings" class="view hidden">
-        <div class="sectionBar ratingBar">
-  <button class="ratingPeriodBtn" id="ratingPeriodBtn" type="button">
-    <span id="ratingPeriodText">First Term</span>
-    <span class="ratingPeriodCaret">▾</span>
-  </button>
+  <!-- RATINGS -->
+<section id="view-ratings" class="view hidden">
 
-  <button class="ratingPeriodRight" id="ratingPeriodRight" type="button" aria-label="Open period menu">
-    ▾
-  </button>
+  <div class="sectionBar ratingBar">
+    <button class="ratingPeriodBtn" id="ratingPeriodBtn" type="button">
+      <span id="ratingPeriodText">First Term</span>
+      <span class="ratingPeriodCaret">▾</span>
+    </button>
 
-  <!-- dropdown menu -->
-  <div class="ratingMenu hidden" id="ratingMenu">
-    <button type="button" class="ratingMenuItem" data-mode="first">First Term</button>
-    <button type="button" class="ratingMenuItem" data-mode="annual">Terminal/annual</button>
+    <button class="ratingPeriodRight" id="ratingPeriodRight" type="button" aria-label="Open period menu">▾</button>
+
+    <div class="ratingMenu hidden" id="ratingMenu">
+      <button type="button" class="ratingMenuItem" data-mode="first">First Term</button>
+      <button type="button" class="ratingMenuItem" data-mode="annual">Terminal/annual</button>
+    </div>
   </div>
-</div>
-          <div class="sectionTitle">First Term</div>
-          <div class="chev"></div>
-        </div>
 
-        <div class="list" id="ratings-firstterm">
-          <div class="list hidden" id="ratings-annual">
+  <!-- ===== FIRST TERM LIST ===== -->
+  <div class="list" id="ratings-firstterm">
 
-  <!-- ===== Base subjects ===== -->
-  <div class="ratingAnnualRow">
-    <div class="rowTop">
-      <div class="book">📖</div>
-      <div style="flex:1; min-width:0;">
-        <div class="rowTitle">Български език и литература</div>
-        <div class="annualLine">
-          <div class="annualCols">
-            <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bBlue">5</span></div>
-            <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
-            <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+    <div class="row">
+      <div class="rowTop">
+        <div class="book">📖</div>
+        <div style="flex:1">
+          <div class="rowTitle">Български език и литература</div>
+          <div class="rowSub">
+            <span class="badge bYellow">4</span>
+            <span class="badge bBlue">5</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- ТУК си допълваш всички останали first term .row редове -->
+
   </div>
 
-  <div class="ratingAnnualRow">
-    <div class="rowTop">
-      <div class="book">📖</div>
-      <div style="flex:1; min-width:0;">
-        <div class="rowTitle">Английски език</div>
-        <div class="annualLine">
-          <div class="annualCols">
-            <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bGreen">6</span></div>
-            <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
-            <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+  <!-- ===== ANNUAL LIST ===== -->
+  <div class="list hidden" id="ratings-annual">
+
+    <div class="ratingAnnualRow">
+      <div class="rowTop">
+        <div class="book">📖</div>
+        <div style="flex:1; min-width:0;">
+          <div class="rowTitle">Български език и литература</div>
+          <div class="annualLine">
+            <div class="annualCols">
+              <div class="annualCol">
+                <span class="annualLbl">First Term</span>
+                <span class="annualDot bBlue">5</span>
+              </div>
+              <div class="annualCol">
+                <span class="annualLbl">Second Term</span>
+                <span class="annualDot"></span>
+              </div>
+              <div class="annualCol">
+                <span class="annualLbl">Annual</span>
+                <span class="annualDot"></span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="ratingAnnualRow">
-    <div class="rowTop">
-      <div class="book">📖</div>
-      <div style="flex:1; min-width:0;">
-        <div class="rowTitle">Руски език</div>
-        <div class="annualLine">
-          <div class="annualCols">
-            <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bYellow">4</span></div>
-            <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
-            <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+    <div class="ratingAnnualRow">
+      <div class="rowTop">
+        <div class="book">📖</div>
+        <div style="flex:1; min-width:0;">
+          <div class="rowTitle">Английски език</div>
+          <div class="annualLine">
+            <div class="annualCols">
+              <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bGreen">6</span></div>
+              <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
+              <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="ratingAnnualRow">
-    <div class="rowTop">
-      <div class="book">📖</div>
-      <div style="flex:1; min-width:0;">
-        <div class="rowTitle">Математика</div>
-        <div class="annualLine">
-          <div class="annualCols">
-            <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bYellow">4</span></div>
-            <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
-            <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+    <div class="ratingAnnualRow">
+      <div class="rowTop">
+        <div class="book">📖</div>
+        <div style="flex:1; min-width:0;">
+          <div class="rowTitle">Руски език</div>
+          <div class="annualLine">
+            <div class="annualCols">
+              <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bYellow">4</span></div>
+              <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
+              <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="ratingAnnualRow">
-    <div class="rowTop">
-      <div class="book">📖</div>
-      <div style="flex:1; min-width:0;">
-        <div class="rowTitle">Гражданско образование</div>
-        <div class="annualLine">
-          <div class="annualCols">
-            <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bOrange">3</span></div>
-            <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
-            <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+    <div class="ratingAnnualRow">
+      <div class="rowTop">
+        <div class="book">📖</div>
+        <div style="flex:1; min-width:0;">
+          <div class="rowTitle">Математика</div>
+          <div class="annualLine">
+            <div class="annualCols">
+              <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bYellow">4</span></div>
+              <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
+              <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="ratingAnnualRow">
-    <div class="rowTop">
-      <div class="book">📖</div>
-      <div style="flex:1; min-width:0;">
-        <div class="rowTitle">Физическо възпитание и спорт</div>
-        <div class="annualLine">
-          <div class="annualCols">
-            <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bBlue">5</span></div>
-            <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
-            <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+    <div class="ratingAnnualRow">
+      <div class="rowTop">
+        <div class="book">📖</div>
+        <div style="flex:1; min-width:0;">
+          <div class="rowTitle">Гражданско образование</div>
+          <div class="annualLine">
+            <div class="annualCols">
+              <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bOrange">3</span></div>
+              <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
+              <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <div class="ratingAnnualRow" style="border-bottom:none;">
+      <div class="rowTop">
+        <div class="book">📖</div>
+        <div style="flex:1; min-width:0;">
+          <div class="rowTitle">Физическо възпитание и спорт</div>
+          <div class="annualLine">
+            <div class="annualCols">
+              <div class="annualCol"><span class="annualLbl">First Term</span><span class="annualDot bBlue">5</span></div>
+              <div class="annualCol"><span class="annualLbl">Second Term</span><span class="annualDot"></span></div>
+              <div class="annualCol"><span class="annualLbl">Annual</span><span class="annualDot"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <!-- ===== English (IUCH - PP) + modules ===== -->
   <div class="ratingAnnualRow">
